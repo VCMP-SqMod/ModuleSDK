@@ -25,8 +25,8 @@
 //  distribution.
 //
 
-#if !defined(_SQ_MOD_H_)
-#define _SQ_MOD_H_
+#if !defined(_SQ_ADDON_H_)
+#define _SQ_ADDON_H_
 
 // ------------------------------------------------------------------------------------------------
 #include <cstddef>
@@ -381,4 +381,4 @@ typedef std::basic_string< SQChar > String;
 #define SQMOD_NULL        NULL
 #define SQMOD_BLANK       0
 
-#endif /*_SQ_MOD_H_*/
+#endif /*_SQ_ADDON_H_*/

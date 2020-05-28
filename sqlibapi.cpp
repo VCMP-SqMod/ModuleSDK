@@ -2,6 +2,10 @@
 #include "sqlibapi.h"
 
 // ------------------------------------------------------------------------------------------------
+#include <stdlib.h>
+#include <string.h>
+
+// ------------------------------------------------------------------------------------------------
 static SQLIBAPI g_API{};
 
 //vm
@@ -423,7 +427,7 @@ void sq_resetobject(HSQOBJECT *po) {
 	g_API.resetobject(po);
 }
 const SQChar* sq_objtostring(const HSQOBJECT *o) {
-	return g_API.objtostring(po);
+	return g_API.objtostring(o);
 }
 SQBool sq_objtobool(const HSQOBJECT *o) {
 	return g_API.objtobool(o);
@@ -468,7 +472,7 @@ void* sq_realloc(void* p,SQUnsignedInteger oldsize,SQUnsignedInteger newsize) {
 	return g_API.realloc(p, oldsize, newsize);
 }
 void sq_free(void *p,SQUnsignedInteger size) {
-	g_API.free(size);
+	g_API.free(p, size);
 }
 
 //debug

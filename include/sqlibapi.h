@@ -25,8 +25,8 @@
 //  distribution.
 //
 
-#if !defined(_SQ_PLUGIN_H_)
-#define _SQ_PLUGIN_H_
+#if !defined(_SQ_LIBAPI_H_)
+#define _SQ_LIBAPI_H_
 
 #include <squirrelex.h>
 #include <stdarg.h>
@@ -431,4 +431,4 @@ extern "C" {
 } /*extern "C"*/
 #endif
 
-#endif /*_SQ_PLUGIN_H_*/
+#endif /*_SQ_LIBAPI_H_*/

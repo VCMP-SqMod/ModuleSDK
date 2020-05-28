@@ -25,8 +25,8 @@
 //  distribution.
 //
 
-#if !defined(_SQ_MOD_H_)
-#define _SQ_MOD_H_
+#if !defined(_SQ_MODAPI_H_)
+#define _SQ_MODAPI_H_
 
 #include <sqlibapi.h>
 #include <vcmp.h>
@@ -35,30 +35,30 @@
 extern "C" {
 #endif
 
-	#if defined(_MSC_VER)
-	    #define SQMOD_API_EXPORT    extern "C" __declspec(dllexport)
-	#elif defined(__GNUC__)
-	    #define SQMOD_API_EXPORT    extern "C"
-	#else
-	    #define SQMOD_API_EXPORT    extern "C"
-	#endif
+    #if defined(_MSC_VER)
+        #define SQMOD_API_EXPORT    extern "C" __declspec(dllexport)
+    #elif defined(__GNUC__)
+        #define SQMOD_API_EXPORT    extern "C"
+    #else
+        #define SQMOD_API_EXPORT    extern "C"
+    #endif
 
-	#define SQMOD_HOST_NAME         "SqModHost"
-	#define SQMOD_INITIALIZE_CMD    0xDABBAD00
-	#define SQMOD_LOAD_CMD          0xDEADBABE
-	#define SQMOD_TERMINATE_CMD     0xDEADC0DE
-	#define SQMOD_CLOSING_CMD       0xBAAAAAAD
-	#define SQMOD_RELEASED_CMD      0xDEADBEAF
-	#define SQMOD_API_VER           1
+    #define SQMOD_HOST_NAME         "SqModHost"
+    #define SQMOD_INITIALIZE_CMD    0xDABBAD00
+    #define SQMOD_LOAD_CMD          0xDEADBABE
+    #define SQMOD_TERMINATE_CMD     0xDEADC0DE
+    #define SQMOD_CLOSING_CMD       0xBAAAAAAD
+    #define SQMOD_RELEASED_CMD      0xDEADBEAF
+    #define SQMOD_API_VER           1
 
-	/**< 64 bits integer types */
-	#if defined(_MSC_VER)
-	    typedef __int64                 SqInt64;
-	    typedef unsigned __int64        SqUint64;
-	#else
-	    typedef long long               SqInt64;
-	    typedef unsigned long long      SqUint64;
-	#endif
+    /**< 64 bits integer types */
+    #if defined(_MSC_VER)
+        typedef __int64                 SqInt64;
+        typedef unsigned __int64        SqUint64;
+    #else
+        typedef long long               SqInt64;
+        typedef unsigned long long      SqUint64;
+    #endif
 
     //primitive functions
     typedef HSQUIRRELVM     (*SqModAPI_GetSquirrelVM) (void);
@@ -170,4 +170,4 @@ extern "C" {
 } /*extern "C"*/
 #endif
 
-#endif /*_SQ_MOD_H_*/
+#endif /*_SQ_MODAPI_H_*/
