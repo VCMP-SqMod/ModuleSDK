@@ -141,6 +141,7 @@ void sq_pushstring(HSQUIRRELVM v,const SQChar *s,SQInteger len) {
 	g_API.pushstring(v, s, len);
 }
 SQRESULT sq_pushstringf(HSQUIRRELVM v,const SQChar *s,...) {
+	va_list args;
     va_start(args,s);
 	return g_API.vpushstringf(v, s, args);
     va_end(args);

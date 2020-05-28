@@ -11,71 +11,85 @@ HSQUIRRELVM SqMod_GetSquirrelVM(void) {
 }
 //logging utilities
 void SqMod_LogDbg(const SQChar * fmt, ...) {
+    va_list args;
     va_start(args, fmt);
 	g_API.LogDbg(fmt, args);
     va_end(args);
 }
 void SqMod_LogUsr(const SQChar * fmt, ...) {
+    va_list args;
     va_start(args, fmt);
 	g_API.LogUsr(fmt, args);
     va_end(args);
 }
 void SqMod_LogScs(const SQChar * fmt, ...) {
+    va_list args;
     va_start(args, fmt);
 	g_API.LogScs(fmt, args);
     va_end(args);
 }
 void SqMod_LogInf(const SQChar * fmt, ...) {
+    va_list args;
     va_start(args, fmt);
 	g_API.LogInf(fmt, args);
     va_end(args);
 }
 void SqMod_LogWrn(const SQChar * fmt, ...) {
+    va_list args;
     va_start(args, fmt);
 	g_API.LogWrn(fmt, args);
     va_end(args);
 }
 void SqMod_LogErr(const SQChar * fmt, ...) {
+    va_list args;
     va_start(args, fmt);
 	g_API.LogErr(fmt, args);
     va_end(args);
 }
 void SqMod_LogFtl(const SQChar * fmt, ...) {
+    va_list args;
     va_start(args, fmt);
 	g_API.LogFtl(fmt, args);
     va_end(args);
 }
 void SqMod_LogSDbg(const SQChar * fmt, ...) {
+    va_list args;
     va_start(args, fmt);
 	g_API.LogSDbg(fmt, args);
     va_end(args);
 }
 void SqMod_LogSUsr(const SQChar * fmt, ...) {
+    va_list args;
     va_start(args, fmt);
 	g_API.LogSUsr(fmt, args);
     va_end(args);
 }
 void SqMod_LogSScs(const SQChar * fmt, ...) {
+    va_list args;
     va_start(args, fmt);
 	g_API.LogSScs(fmt, args);
     va_end(args);
 }
 void SqMod_LogSInf(const SQChar * fmt, ...) {
+    va_list args;
     va_start(args, fmt);
 	g_API.LogSInf(fmt, args);
     va_end(args);
 }
 void SqMod_LogSWrn(const SQChar * fmt, ...) {
+    va_list args;
     va_start(args, fmt);
 	g_API.LogSWrn(fmt, args);
     va_end(args);
 }
 void SqMod_LogSErr(const SQChar * fmt, ...) {
+    va_list args;
     va_start(args, fmt);
 	g_API.LogSErr(fmt, args);
     va_end(args);
 }
 void SqMod_LogSFtl(const SQChar * fmt, ...) {
+    va_list args;
     va_start(args, fmt);
 	g_API.LogSFtl(fmt, args);
     va_end(args);
