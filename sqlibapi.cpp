@@ -171,7 +171,7 @@ SQObjectType sq_gettype(HSQUIRRELVM v,SQInteger idx) {
 	return g_API.gettype(v, idx);
 }
 SQRESULT sq_typeof(HSQUIRRELVM v,SQInteger idx) {
-	return g_API.typeof(v, idx);
+	return g_API.typeof_(v, idx);
 }
 SQInteger sq_getsize(HSQUIRRELVM v,SQInteger idx) {
 	return g_API.getsize(v, idx);
