@@ -36,7 +36,7 @@ begin:
     return SQ_ERROR;
 }
 
-void sq_pushstringf(HSQUIRRELVM v,const SQChar *s,...)
+SQRESULT sq_pushstringf(HSQUIRRELVM v,const SQChar *s,...)
 {
     SQInteger n=256;
     va_list args;
@@ -50,8 +50,31 @@ begin:
         goto begin;
     } else if (r<0) {
         v->PushNull();
+        return SQ_ERROR;
     } else {
         v->Push(SQObjectPtr(SQString::Create(_ss(v),b,r)));
+        return SQ_OK;
+    }
+}
+
+SQRESULT sq_vpushstringf(HSQUIRRELVM v,const SQChar *s,va_list l)
+{
+    SQInteger n=256;
+    va_list args;
+begin:
+    va_copy(args,l);
+    SQChar *b=sq_getscratchpad(v,n);
+    SQInteger r=scvsprintf(b,n,s,args);
+    va_end(args);
+    if (r>=n) {
+        n=r+1;//required+null
+        goto begin;
+    } else if (r<0) {
+        v->PushNull();
+        return SQ_ERROR;
+    } else {
+        v->Push(SQObjectPtr(SQString::Create(_ss(v),b,r)));
+        return SQ_OK;
     }
 }
 

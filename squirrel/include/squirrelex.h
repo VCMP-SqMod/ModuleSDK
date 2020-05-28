@@ -5,6 +5,7 @@
 #define _SQUIRRELEX_H_
 
 #include <squirrel.h>
+#include <stdarg.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,7 +14,8 @@ extern "C" {
 #ifndef SQMOD_PLUGIN_API
 
 SQUIRREL_API SQRESULT sq_throwerrorf(HSQUIRRELVM v,const SQChar *err,...);
-SQUIRREL_API void sq_pushstringf(HSQUIRRELVM v,const SQChar *s,...);
+SQUIRREL_API SQRESULT sq_pushstringf(HSQUIRRELVM v,const SQChar *s,...);
+SQUIRREL_API SQRESULT sq_vpushstringf(HSQUIRRELVM v,const SQChar *s,va_list l);
 SQUIRREL_API SQRESULT sq_getnativeclosurepointer(HSQUIRRELVM v,SQInteger idx,SQFUNCTION *f);
 
 #endif // SQMOD_PLUGIN_API

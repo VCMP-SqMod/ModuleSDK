@@ -1,13 +1,40 @@
-#ifndef _SQMODBASE_HPP_
-#define _SQMODBASE_HPP_
+//
+// SqModule: API used to communicate with and register squirrel modules
+//
 
-// ------------------------------------------------------------------------------------------------
-#include <sqconfig.h>
+//
+// Copyright (c) 2016 Sandu Liviu Catalin (aka. S.L.C)
+//
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+//  1. The origin of this software must not be misrepresented; you must not
+//  claim that you wrote the original software. If you use this software
+//  in a product, an acknowledgment in the product documentation would be
+//  appreciated but is not required.
+//
+//  2. Altered source versions must be plainly marked as such, and must not be
+//  misrepresented as being the original software.
+//
+//  3. This notice may not be removed or altered from any source
+//  distribution.
+//
+
+#if !defined(_SQ_MOD_H_)
+#define _SQ_MOD_H_
 
 // ------------------------------------------------------------------------------------------------
 #include <cstddef>
 #include <cassert>
 #include <string>
+
+// ------------------------------------------------------------------------------------------------
+#include <sqmodapi.h>
 
 /* ------------------------------------------------------------------------------------------------
  * ARCHITECTURE IDENTIFIERS
@@ -107,15 +134,11 @@
 #endif
 
 /* ------------------------------------------------------------------------------------------------
- * SQUIRREL FORWARD DECLARATIONS
+ * VCMP SDK VERSION CHECK.
 */
-
-extern "C" {
-    typedef struct tagSQObject SQObject;
-    struct SQVM;
-    typedef struct SQVM* HSQUIRRELVM;
-    typedef SQObject HSQOBJECT;
-} /*extern "C"*/
+#define SQMOD_SDK_MATCH(MJR, MNR) ((PLUGIN_API_MAJOR == (MJR)) && (PLUGIN_API_MINOR == (MNR)))
+#define SQMOD_SDK_LEAST(MJR, MNR) ((PLUGIN_API_MAJOR >= (MJR)) && (PLUGIN_API_MINOR >= (MNR)))
+#define SQMOD_SDK_PRIOR(MJR, MNR) ((PLUGIN_API_MAJOR < (MJR)) && (PLUGIN_API_MINOR < (MNR)))
 
 /* ------------------------------------------------------------------------------------------------
  * SQRAT FORWARD DECLARATIONS
@@ -223,6 +246,13 @@ typedef std::basic_string< SQChar > String;
 */
 
 } // Namespace:: SqMod
+
+/* ------------------------------------------------------------------------------------------------
+ * UNUSED STUFF
+*/
+
+#define SQMOD_DECL_UNUSED_VAR(t, n, v) t n = v; (void)(n)
+#define SQMOD_UNUSED_VAR(n) (void)(n)
 
 /* ------------------------------------------------------------------------------------------------
  * OS SPECIFFIC OPTIONS
@@ -351,4 +381,4 @@ typedef std::basic_string< SQChar > String;
 #define SQMOD_NULL        NULL
 #define SQMOD_BLANK       0
 
-#endif // _SQMODBASE_HPP_
+#endif /*_SQ_MOD_H_*/

@@ -25,10 +25,11 @@
 //  distribution.
 //
 
-#if !defined(_SQ_API_H_)
-#define _SQ_API_H_
+#if !defined(_SQ_PLUGIN_H_)
+#define _SQ_PLUGIN_H_
 
-#include "squirrel.h"
+#include <squirrelex.h>
+#include <stdarg.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -84,7 +85,8 @@ extern "C" {
     typedef SQRESULT (*SqLibAPI_setclosureroot)(HSQUIRRELVM v,SQInteger idx);
     typedef SQRESULT (*SqLibAPI_getclosureroot)(HSQUIRRELVM v,SQInteger idx);
     typedef void (*SqLibAPI_pushstring)(HSQUIRRELVM v,const SQChar *s,SQInteger len);
-    typedef void (*SqLibAPI_pushstringf)(HSQUIRRELVM v,const SQChar *s,...);
+    typedef SQRESULT (*SqLibAPI_pushstringf)(HSQUIRRELVM v,const SQChar *s,...);
+    typedef SQRESULT (*SqLibAPI_vpushstringf)(HSQUIRRELVM v,const SQChar *s,va_list l);
     typedef void (*SqLibAPI_pushfloat)(HSQUIRRELVM v,SQFloat f);
     typedef void (*SqLibAPI_pushinteger)(HSQUIRRELVM v,SQInteger n);
     typedef void (*SqLibAPI_pushbool)(HSQUIRRELVM v,SQBool b);
@@ -278,6 +280,7 @@ extern "C" {
         SqLibAPI_getclosureroot                     getclosureroot;
         SqLibAPI_pushstring                         pushstring;
         SqLibAPI_pushstringf                        pushstringf;
+        SqLibAPI_vpushstringf                       vpushstringf;
         SqLibAPI_pushfloat                          pushfloat;
         SqLibAPI_pushinteger                        pushinteger;
         SqLibAPI_pushbool                           pushbool;
@@ -414,382 +417,18 @@ extern "C" {
     } sqlib_api, SQLIBAPI, *HSQLIBAPI;
     /// @endcond
 
-#ifdef SQMOD_PLUGIN_API
+    /* --------------------------------------------------------------------------------------------
+     * Store the API entries from the specified API structure so they can be accessed later.
+    */
+    SQUIRREL_API int sqlib_api_expand(HSQLIBAPI sqlibapi);
 
-    //vm
-    extern SqLibAPI_open                            SqLib_open;
-    extern SqLibAPI_newthread                       SqLib_newthread;
-    extern SqLibAPI_seterrorhandler                 SqLib_seterrorhandler;
-    extern SqLibAPI_close                           SqLib_close;
-    extern SqLibAPI_setforeignptr                   SqLib_setforeignptr;
-    extern SqLibAPI_getforeignptr                   SqLib_getforeignptr;
-    extern SqLibAPI_setsharedforeignptr             SqLib_setsharedforeignptr;
-    extern SqLibAPI_getsharedforeignptr             SqLib_getsharedforeignptr;
-    extern SqLibAPI_setvmreleasehook                SqLib_setvmreleasehook;
-    extern SqLibAPI_getvmreleasehook                SqLib_getvmreleasehook;
-    extern SqLibAPI_setsharedreleasehook            SqLib_setsharedreleasehook;
-    extern SqLibAPI_getsharedreleasehook            SqLib_getsharedreleasehook;
-    extern SqLibAPI_setprintfunc                    SqLib_setprintfunc;
-    extern SqLibAPI_getprintfunc                    SqLib_getprintfunc;
-    extern SqLibAPI_geterrorfunc                    SqLib_geterrorfunc;
-    extern SqLibAPI_suspendvm                       SqLib_suspendvm;
-    extern SqLibAPI_wakeupvm                        SqLib_wakeupvm;
-    extern SqLibAPI_getvmstate                      SqLib_getvmstate;
-    extern SqLibAPI_getversion                      SqLib_getversion;
-
-    //compiler
-    extern SqLibAPI_compile                         SqLib_compile;
-    extern SqLibAPI_compilebuffer                   SqLib_compilebuffer;
-    extern SqLibAPI_enabledebuginfo                 SqLib_enabledebuginfo;
-    extern SqLibAPI_notifyallexceptions             SqLib_notifyallexceptions;
-    extern SqLibAPI_setcompilererrorhandler         SqLib_setcompilererrorhandler;
-
-    //stack operations
-    extern SqLibAPI_push                            SqLib_push;
-    extern SqLibAPI_pop                             SqLib_pop;
-    extern SqLibAPI_poptop                          SqLib_poptop;
-    extern SqLibAPI_remove                          SqLib_remove;
-    extern SqLibAPI_gettop                          SqLib_gettop;
-    extern SqLibAPI_settop                          SqLib_settop;
-    extern SqLibAPI_reservestack                    SqLib_reservestack;
-    extern SqLibAPI_cmp                             SqLib_cmp;
-    extern SqLibAPI_move                            SqLib_move;
-
-    //object creation handling
-    extern SqLibAPI_newuserdata                     SqLib_newuserdata;
-    extern SqLibAPI_newtable                        SqLib_newtable;
-    extern SqLibAPI_newtableex                      SqLib_newtableex;
-    extern SqLibAPI_newarray                        SqLib_newarray;
-    extern SqLibAPI_newclosure                      SqLib_newclosure;
-    extern SqLibAPI_setparamscheck                  SqLib_setparamscheck;
-    extern SqLibAPI_bindenv                         SqLib_bindenv;
-    extern SqLibAPI_setclosureroot                  SqLib_setclosureroot;
-    extern SqLibAPI_getclosureroot                  SqLib_getclosureroot;
-    extern SqLibAPI_pushstring                      SqLib_pushstring;
-    extern SqLibAPI_pushstringf                     SqLib_pushstringf;
-    extern SqLibAPI_pushfloat                       SqLib_pushfloat;
-    extern SqLibAPI_pushinteger                     SqLib_pushinteger;
-    extern SqLibAPI_pushbool                        SqLib_pushbool;
-    extern SqLibAPI_pushuserpointer                 SqLib_pushuserpointer;
-    extern SqLibAPI_pushnull                        SqLib_pushnull;
-    extern SqLibAPI_pushthread                      SqLib_pushthread;
-    extern SqLibAPI_gettype                         SqLib_gettype;
-    extern SqLibAPI_typeof                          SqLib_typeof;
-    extern SqLibAPI_getsize                         SqLib_getsize;
-    extern SqLibAPI_gethash                         SqLib_gethash;
-    extern SqLibAPI_getbase                         SqLib_getbase;
-    extern SqLibAPI_instanceof                      SqLib_instanceof;
-    extern SqLibAPI_tostring                        SqLib_tostring;
-    extern SqLibAPI_tobool                          SqLib_tobool;
-    extern SqLibAPI_getstringandsize                SqLib_getstringandsize;
-    extern SqLibAPI_getstring                       SqLib_getstring;
-    extern SqLibAPI_getinteger                      SqLib_getinteger;
-    extern SqLibAPI_getfloat                        SqLib_getfloat;
-    extern SqLibAPI_getbool                         SqLib_getbool;
-    extern SqLibAPI_getthread                       SqLib_getthread;
-    extern SqLibAPI_getuserpointer                  SqLib_getuserpointer;
-    extern SqLibAPI_getuserdata                     SqLib_getuserdata;
-    extern SqLibAPI_settypetag                      SqLib_settypetag;
-    extern SqLibAPI_gettypetag                      SqLib_gettypetag;
-    extern SqLibAPI_setreleasehook                  SqLib_setreleasehook;
-    extern SqLibAPI_getreleasehook                  SqLib_getreleasehook;
-    extern SqLibAPI_getscratchpad                   SqLib_getscratchpad;
-    extern SqLibAPI_getfunctioninfo                 SqLib_getfunctioninfo;
-    extern SqLibAPI_getclosureinfo                  SqLib_getclosureinfo;
-    extern SqLibAPI_getclosurename                  SqLib_getclosurename;
-    extern SqLibAPI_setnativeclosurename            SqLib_setnativeclosurename;
-    extern SqLibAPI_getnativeclosurepointer         SqLib_getnativeclosurepointer;
-    extern SqLibAPI_setinstanceup                   SqLib_setinstanceup;
-    extern SqLibAPI_getinstanceup                   SqLib_getinstanceup;
-    extern SqLibAPI_setclassudsize                  SqLib_setclassudsize;
-    extern SqLibAPI_newclass                        SqLib_newclass;
-    extern SqLibAPI_createinstance                  SqLib_createinstance;
-    extern SqLibAPI_setattributes                   SqLib_setattributes;
-    extern SqLibAPI_getattributes                   SqLib_getattributes;
-    extern SqLibAPI_getclass                        SqLib_getclass;
-    extern SqLibAPI_weakref                         SqLib_weakref;
-    extern SqLibAPI_getdefaultdelegate              SqLib_getdefaultdelegate;
-    extern SqLibAPI_getmemberhandle                 SqLib_getmemberhandle;
-    extern SqLibAPI_getbyhandle                     SqLib_getbyhandle;
-    extern SqLibAPI_setbyhandle                     SqLib_setbyhandle;
-
-    //object manipulation
-    extern SqLibAPI_pushroottable                   SqLib_pushroottable;
-    extern SqLibAPI_pushregistrytable               SqLib_pushregistrytable;
-    extern SqLibAPI_pushconsttable                  SqLib_pushconsttable;
-    extern SqLibAPI_setroottable                    SqLib_setroottable;
-    extern SqLibAPI_setconsttable                   SqLib_setconsttable;
-    extern SqLibAPI_newslot                         SqLib_newslot;
-    extern SqLibAPI_deleteslot                      SqLib_deleteslot;
-    extern SqLibAPI_set                             SqLib_set;
-    extern SqLibAPI_get                             SqLib_get;
-    extern SqLibAPI_rawget                          SqLib_rawget;
-    extern SqLibAPI_rawset                          SqLib_rawset;
-    extern SqLibAPI_rawdeleteslot                   SqLib_rawdeleteslot;
-    extern SqLibAPI_newmember                       SqLib_newmember;
-    extern SqLibAPI_rawnewmember                    SqLib_rawnewmember;
-    extern SqLibAPI_arrayappend                     SqLib_arrayappend;
-    extern SqLibAPI_arraypop                        SqLib_arraypop;
-    extern SqLibAPI_arrayresize                     SqLib_arrayresize;
-    extern SqLibAPI_arrayreverse                    SqLib_arrayreverse;
-    extern SqLibAPI_arrayremove                     SqLib_arrayremove;
-    extern SqLibAPI_arrayinsert                     SqLib_arrayinsert;
-    extern SqLibAPI_setdelegate                     SqLib_setdelegate;
-    extern SqLibAPI_getdelegate                     SqLib_getdelegate;
-    extern SqLibAPI_clone                           SqLib_clone;
-    extern SqLibAPI_setfreevariable                 SqLib_setfreevariable;
-    extern SqLibAPI_next                            SqLib_next;
-    extern SqLibAPI_getweakrefval                   SqLib_getweakrefval;
-    extern SqLibAPI_clear                           SqLib_clear;
-
-    //calls
-    extern SqLibAPI_call                            SqLib_call;
-    extern SqLibAPI_resume                          SqLib_resume;
-    extern SqLibAPI_getlocal                        SqLib_getlocal;
-    extern SqLibAPI_getcallee                       SqLib_getcallee;
-    extern SqLibAPI_getfreevariable                 SqLib_getfreevariable;
-    extern SqLibAPI_getonefreevariable              SqLib_getonefreevariable;
-    extern SqLibAPI_throwerror                      SqLib_throwerror;
-    extern SqLibAPI_throwerrorf                     SqLib_throwerrorf;
-    extern SqLibAPI_throwobject                     SqLib_throwobject;
-    extern SqLibAPI_reseterror                      SqLib_reseterror;
-    extern SqLibAPI_getlasterror                    SqLib_getlasterror;
-
-    //raw object handling
-    extern SqLibAPI_getstackobj                     SqLib_getstackobj;
-    extern SqLibAPI_pushobject                      SqLib_pushobject;
-    extern SqLibAPI_addref                          SqLib_addref;
-    extern SqLibAPI_release                         SqLib_release;
-    extern SqLibAPI_getrefcount                     SqLib_getrefcount;
-    extern SqLibAPI_resetobject                     SqLib_resetobject;
-    extern SqLibAPI_objtostring                     SqLib_objtostring;
-    extern SqLibAPI_objtobool                       SqLib_objtobool;
-    extern SqLibAPI_objtointeger                    SqLib_objtointeger;
-    extern SqLibAPI_objtofloat                      SqLib_objtofloat;
-    extern SqLibAPI_objtouserpointer                SqLib_objtouserpointer;
-    extern SqLibAPI_getobjtypetag                   SqLib_getobjtypetag;
-    extern SqLibAPI_getvmrefcount                   SqLib_getvmrefcount;
-
-    //GC
-    extern SqLibAPI_collectgarbage                  SqLib_collectgarbage;
-    extern SqLibAPI_resurrectunreachable            SqLib_resurrectunreachable;
-
-    //serialization
-    extern SqLibAPI_writeclosure                    SqLib_writeclosure;
-    extern SqLibAPI_readclosure                     SqLib_readclosure;
-
-    //mem allocation
-    extern SqLibAPI_malloc                          SqLib_malloc;
-    extern SqLibAPI_realloc                         SqLib_realloc;
-    extern SqLibAPI_free                            SqLib_free;
-
-    //debug
-    extern SqLibAPI_stackinfos                      SqLib_stackinfos;
-    extern SqLibAPI_setdebughook                    SqLib_setdebughook;
-    extern SqLibAPI_setnativedebughook              SqLib_setnativedebughook;
-
-    //compiler helpers
-    extern SqLibAPI_loadfile                        SqLib_loadfile;
-    extern SqLibAPI_dofile                          SqLib_dofile;
-    extern SqLibAPI_writeclosuretofile              SqLib_writeclosuretofile;
-
-    //blob
-    extern SqLibAPI_createblob                      SqLib_createblob;
-    extern SqLibAPI_getblob                         SqLib_getblob;
-    extern SqLibAPI_getblobsize                     SqLib_getblobsize;
-
-    //string
-    extern SqLibAPI_format                          SqLib_format;
-
-    //vm
-    #define sq_open                                 SqLib_open
-    #define sq_newthread                            SqLib_newthread
-    #define sq_seterrorhandler                      SqLib_seterrorhandler
-    #define sq_close                                SqLib_close
-    #define sq_setforeignptr                        SqLib_setforeignptr
-    #define sq_getforeignptr                        SqLib_getforeignptr
-    #define sq_setsharedforeignptr                  SqLib_setsharedforeignptr
-    #define sq_getsharedforeignptr                  SqLib_getsharedforeignptr
-    #define sq_setvmreleasehook                     SqLib_setvmreleasehook
-    #define sq_getvmreleasehook                     SqLib_getvmreleasehook
-    #define sq_setsharedreleasehook                 SqLib_setsharedreleasehook
-    #define sq_getsharedreleasehook                 SqLib_getsharedreleasehook
-    #define sq_setprintfunc                         SqLib_setprintfunc
-    #define sq_getprintfunc                         SqLib_getprintfunc
-    #define sq_geterrorfunc                         SqLib_geterrorfunc
-    #define sq_suspendvm                            SqLib_suspendvm
-    #define sq_wakeupvm                             SqLib_wakeupvm
-    #define sq_getvmstate                           SqLib_getvmstate
-    #define sq_getversion                           SqLib_getversion
-
-    //compiler
-    #define sq_compile                              SqLib_compile
-    #define sq_compilebuffer                        SqLib_compilebuffer
-    #define sq_enabledebuginfo                      SqLib_enabledebuginfo
-    #define sq_notifyallexceptions                  SqLib_notifyallexceptions
-    #define sq_setcompilererrorhandler              SqLib_setcompilererrorhandler
-
-    //stack operations
-    #define sq_push                                 SqLib_push
-    #define sq_pop                                  SqLib_pop
-    #define sq_poptop                               SqLib_poptop
-    #define sq_remove                               SqLib_remove
-    #define sq_gettop                               SqLib_gettop
-    #define sq_settop                               SqLib_settop
-    #define sq_reservestack                         SqLib_reservestack
-    #define sq_cmp                                  SqLib_cmp
-    #define sq_move                                 SqLib_move
-
-    //object creation handling
-    #define sq_newuserdata                          SqLib_newuserdata
-    #define sq_newtable                             SqLib_newtable
-    #define sq_newtableex                           SqLib_newtableex
-    #define sq_newarray                             SqLib_newarray
-    #define sq_newclosure                           SqLib_newclosure
-    #define sq_setparamscheck                       SqLib_setparamscheck
-    #define sq_bindenv                              SqLib_bindenv
-    #define sq_setclosureroot                       SqLib_setclosureroot
-    #define sq_getclosureroot                       SqLib_getclosureroot
-    #define sq_pushstring                           SqLib_pushstring
-    #define sq_pushstringf                          SqLib_pushstringf
-    #define sq_pushfloat                            SqLib_pushfloat
-    #define sq_pushinteger                          SqLib_pushinteger
-    #define sq_pushbool                             SqLib_pushbool
-    #define sq_pushuserpointer                      SqLib_pushuserpointer
-    #define sq_pushnull                             SqLib_pushnull
-    #define sq_pushthread                           SqLib_pushthread
-    #define sq_gettype                              SqLib_gettype
-    #define sq_typeof                               SqLib_typeof
-    #define sq_getsize                              SqLib_getsize
-    #define sq_gethash                              SqLib_gethash
-    #define sq_getbase                              SqLib_getbase
-    #define sq_instanceof                           SqLib_instanceof
-    #define sq_tostring                             SqLib_tostring
-    #define sq_tobool                               SqLib_tobool
-    #define sq_getstringandsize                     SqLib_getstringandsize
-    #define sq_getstring                            SqLib_getstring
-    #define sq_getinteger                           SqLib_getinteger
-    #define sq_getfloat                             SqLib_getfloat
-    #define sq_getbool                              SqLib_getbool
-    #define sq_getthread                            SqLib_getthread
-    #define sq_getuserpointer                       SqLib_getuserpointer
-    #define sq_getuserdata                          SqLib_getuserdata
-    #define sq_settypetag                           SqLib_settypetag
-    #define sq_gettypetag                           SqLib_gettypetag
-    #define sq_setreleasehook                       SqLib_setreleasehook
-    #define sq_getreleasehook                       SqLib_getreleasehook
-    #define sq_getscratchpad                        SqLib_getscratchpad
-    #define sq_getfunctioninfo                      SqLib_getfunctioninfo
-    #define sq_getclosureinfo                       SqLib_getclosureinfo
-    #define sq_getclosurename                       SqLib_getclosurename
-    #define sq_setnativeclosurename                 SqLib_setnativeclosurename
-    #define sq_getnativeclosurepointer              SqLib_getnativeclosurepointer
-    #define sq_setinstanceup                        SqLib_setinstanceup
-    #define sq_getinstanceup                        SqLib_getinstanceup
-    #define sq_setclassudsize                       SqLib_setclassudsize
-    #define sq_newclass                             SqLib_newclass
-    #define sq_createinstance                       SqLib_createinstance
-    #define sq_setattributes                        SqLib_setattributes
-    #define sq_getattributes                        SqLib_getattributes
-    #define sq_getclass                             SqLib_getclass
-    #define sq_weakref                              SqLib_weakref
-    #define sq_getdefaultdelegate                   SqLib_getdefaultdelegate
-    #define sq_getmemberhandle                      SqLib_getmemberhandle
-    #define sq_getbyhandle                          SqLib_getbyhandle
-    #define sq_setbyhandle                          SqLib_setbyhandle
-
-    //object manipulation
-    #define sq_pushroottable                        SqLib_pushroottable
-    #define sq_pushregistrytable                    SqLib_pushregistrytable
-    #define sq_pushconsttable                       SqLib_pushconsttable
-    #define sq_setroottable                         SqLib_setroottable
-    #define sq_setconsttable                        SqLib_setconsttable
-    #define sq_newslot                              SqLib_newslot
-    #define sq_deleteslot                           SqLib_deleteslot
-    #define sq_set                                  SqLib_set
-    #define sq_get                                  SqLib_get
-    #define sq_rawget                               SqLib_rawget
-    #define sq_rawset                               SqLib_rawset
-    #define sq_rawdeleteslot                        SqLib_rawdeleteslot
-    #define sq_newmember                            SqLib_newmember
-    #define sq_rawnewmember                         SqLib_rawnewmember
-    #define sq_arrayappend                          SqLib_arrayappend
-    #define sq_arraypop                             SqLib_arraypop
-    #define sq_arrayresize                          SqLib_arrayresize
-    #define sq_arrayreverse                         SqLib_arrayreverse
-    #define sq_arrayremove                          SqLib_arrayremove
-    #define sq_arrayinsert                          SqLib_arrayinsert
-    #define sq_setdelegate                          SqLib_setdelegate
-    #define sq_getdelegate                          SqLib_getdelegate
-    #define sq_clone                                SqLib_clone
-    #define sq_setfreevariable                      SqLib_setfreevariable
-    #define sq_next                                 SqLib_next
-    #define sq_getweakrefval                        SqLib_getweakrefval
-    #define sq_clear                                SqLib_clear
-
-    //calls
-    #define sq_call                                 SqLib_call
-    #define sq_resume                               SqLib_resume
-    #define sq_getlocal                             SqLib_getlocal
-    #define sq_getcallee                            SqLib_getcallee
-    #define sq_getfreevariable                      SqLib_getfreevariable
-    #define sq_getonefreevariable                   SqLib_getonefreevariable
-    #define sq_throwerror                           SqLib_throwerror
-    #define sq_throwerrorf                          SqLib_throwerrorf
-    #define sq_throwobject                          SqLib_throwobject
-    #define sq_reseterror                           SqLib_reseterror
-    #define sq_getlasterror                         SqLib_getlasterror
-
-    //raw object handling
-    #define sq_getstackobj                          SqLib_getstackobj
-    #define sq_pushobject                           SqLib_pushobject
-    #define sq_addref                               SqLib_addref
-    #define sq_release                              SqLib_release
-    #define sq_getrefcount                          SqLib_getrefcount
-    #define sq_resetobject                          SqLib_resetobject
-    #define sq_objtostring                          SqLib_objtostring
-    #define sq_objtobool                            SqLib_objtobool
-    #define sq_objtointeger                         SqLib_objtointeger
-    #define sq_objtofloat                           SqLib_objtofloat
-    #define sq_objtouserpointer                     SqLib_objtouserpointer
-    #define sq_getobjtypetag                        SqLib_getobjtypetag
-    #define sq_getvmrefcount                        SqLib_getvmrefcount
-
-    //GC
-    #define sq_collectgarbage                       SqLib_collectgarbage
-    #define sq_resurrectunreachable                 SqLib_resurrectunreachable
-
-    //serialization
-    #define sq_writeclosure                         SqLib_writeclosure
-    #define sq_readclosure                          SqLib_readclosure
-
-    //mem allocation
-    #define sq_malloc                               SqLib_malloc
-    #define sq_realloc                              SqLib_realloc
-    #define sq_free                                 SqLib_free
-
-    //debug
-    #define sq_stackinfos                           SqLib_stackinfos
-    #define sq_setdebughook                         SqLib_setdebughook
-    #define sq_setnativedebughook                   SqLib_setnativedebughook
-
-    //compiler helpers
-    #define sqstd_loadfile                          SqLib_loadfile
-    #define sqstd_dofile                            SqLib_dofile
-    #define sqstd_writeclosuretofile                SqLib_writeclosuretofile
-
-    //blob
-    #define sqstd_createblob                        SqLib_createblob
-    #define sqstd_getblob                           SqLib_getblob
-    #define sqstd_getblobsize                       SqLib_getblobsize
-
-    //string
-    #define sqstd_format                            SqLib_format
-
-#endif // SQMOD_PLUGIN_API
+    /* --------------------------------------------------------------------------------------------
+     * Undo changes done by sq_api_expand.
+    */
+    SQUIRREL_API void sqlib_api_collapse();
 
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif
 
-#endif /*_SQ_API_H_*/
+#endif /*_SQ_PLUGIN_H_*/

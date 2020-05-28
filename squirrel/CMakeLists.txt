@@ -40,6 +40,8 @@ add_library(Squirrel STATIC
 	stdlib/sqstdstring.cpp
 	stdlib/sqstdsystem.cpp
 )
+# Create the Squirrel interface library used only to get access to includes and definitions
+add_library(SquirrelInterface INTERFACE)
 # Determine if build mode
 if(CMAKE_BUILD_TYPE MATCHES Release)
 	target_compile_definitions(Squirrel PRIVATE NDEBUG=1)
@@ -49,8 +51,9 @@ endif()
 # Make sure Squirrel knows this is 64 bit
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     target_compile_definitions(Squirrel PUBLIC _SQ64)
+    target_compile_definitions(SquirrelInterface INTERFACE _SQ64)
 endif()
-# Set speciffic compiler options
+# Set specific compiler options
 if (GCC OR MINGW)
 	target_compile_options(Squirrel PRIVATE -w
 		-fno-exceptions
@@ -67,11 +70,4 @@ endif()
 target_include_directories(Squirrel PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 target_include_directories(Squirrel PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 target_include_directories(Squirrel PRIVATE ${CMAKE_CURRENT_LIST_DIR}/stdlib)
-# Create the Squirrel library
-add_library(SquirrelAPI INTERFACE)
-# Library includes
-target_include_directories(SquirrelAPI INTERFACE ${CMAKE_CURRENT_LIST_DIR}/include)
-# Switch to plugin-development mode
-if(PLUGIN_DEVEL)
-	target_compile_definitions(SquirrelAPI INTERFACE SQMOD_PLUGIN_API=1)
-endif()
+target_include_directories(SquirrelInterface INTERFACE ${CMAKE_CURRENT_LIST_DIR}/include)
