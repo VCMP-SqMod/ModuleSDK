@@ -141,17 +141,6 @@
 #define SQMOD_SDK_PRIOR(MJR, MNR) ((PLUGIN_API_MAJOR < (MJR)) && (PLUGIN_API_MINOR < (MNR)))
 
 /* ------------------------------------------------------------------------------------------------
- * SQRAT FORWARD DECLARATIONS
-*/
-
-namespace Sqrat {
-    class Array;
-    class Object;
-    class Table;
-    class Function;
-} // Namespace:: Sqrat
-
-/* ------------------------------------------------------------------------------------------------
  * FUNDAMENTAL DATATYPES
 */
 
