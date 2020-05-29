@@ -31,11 +31,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#ifdef SQMOD_PLUGIN_API
-    #include <SqAPI.h>
-#else
-    #include <squirrelex.h>
-#endif // SQMOD_PLUGIN_API
+#include <squirrelex.h>
 
 #include <string>
 

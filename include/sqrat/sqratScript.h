@@ -28,12 +28,7 @@
 #if !defined(_SCRAT_SCRIPT_H_)
 #define _SCRAT_SCRIPT_H_
 
-#ifdef SQMOD_PLUGIN_API
-    #include <SqAPI.h>
-#else
-    #include <squirrelex.h>
-    #include <sqstdio.h>
-#endif // SQMOD_PLUGIN_API
+#include <squirrelex.h>
 
 #include <string.h>
 

@@ -28,12 +28,8 @@
 #if !defined(_SCRAT_UTIL_H_)
 #define _SCRAT_UTIL_H_
 
-#ifdef SQMOD_PLUGIN_API
-    #include <SqAPI.h>
-#else
-    #include <squirrelex.h>
-    #include <sqstdstring.h>
-#endif // SQMOD_PLUGIN_API
+#include <squirrelex.h>
+#include <sqstdstring.h>
 
 #include <cassert>
 #include <map>

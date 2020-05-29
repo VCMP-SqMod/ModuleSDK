@@ -56,11 +56,7 @@
 #if !defined(_SCRAT_MAIN_H_)
 #define _SCRAT_MAIN_H_
 
-#ifdef SQMOD_PLUGIN_API
-    #include <SqAPI.h>
-#else
-    #include <squirrelex.h>
-#endif // SQMOD_PLUGIN_API
+#include <squirrelex.h>
 
 #include "sqrat/sqratTable.h"
 #include "sqrat/sqratClass.h"

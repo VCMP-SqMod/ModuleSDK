@@ -487,29 +487,29 @@ void sq_setnativedebughook(HSQUIRRELVM v,SQDEBUGHOOK hook) {
 }
 
 //compiler helpers
-SQRESULT sq_loadfile(HSQUIRRELVM v,const SQChar *filename,SQBool printerror) {
+SQRESULT sqstd_loadfile(HSQUIRRELVM v,const SQChar *filename,SQBool printerror) {
 	return g_API.loadfile(v, filename, printerror);
 }
-SQRESULT sq_dofile(HSQUIRRELVM v,const SQChar *filename,SQBool retval,SQBool printerror) {
+SQRESULT sqstd_dofile(HSQUIRRELVM v,const SQChar *filename,SQBool retval,SQBool printerror) {
 	return g_API.dofile(v, filename, retval, printerror);
 }
-SQRESULT sq_writeclosuretofile(HSQUIRRELVM v,const SQChar *filename) {
+SQRESULT sqstd_writeclosuretofile(HSQUIRRELVM v,const SQChar *filename) {
 	return g_API.writeclosuretofile(v, filename);
 }
 
 //blob
-SQUserPointer sq_createblob(HSQUIRRELVM v, SQInteger size) {
+SQUserPointer sqstd_createblob(HSQUIRRELVM v, SQInteger size) {
 	return g_API.createblob(v, size);
 }
-SQRESULT sq_getblob(HSQUIRRELVM v,SQInteger idx,SQUserPointer *ptr) {
+SQRESULT sqstd_getblob(HSQUIRRELVM v,SQInteger idx,SQUserPointer *ptr) {
 	return g_API.getblob(v, idx, ptr);
 }
-SQInteger sq_getblobsize(HSQUIRRELVM v,SQInteger idx) {
+SQInteger sqstd_getblobsize(HSQUIRRELVM v,SQInteger idx) {
 	return g_API.getblobsize(v, idx);
 }
 
 //string
-SQRESULT sq_format(HSQUIRRELVM v,SQInteger nformatstringidx,SQInteger *outlen,SQChar **output) {
+SQRESULT sqstd_format(HSQUIRRELVM v,SQInteger nformatstringidx,SQInteger *outlen,SQChar **output) {
 	return g_API.format(v, nformatstringidx, outlen, output);
 }
 

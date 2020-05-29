@@ -29,11 +29,7 @@
 #if !defined(_SCRAT_GLOBAL_METHODS_H_)
 #define _SCRAT_GLOBAL_METHODS_H_
 
-#ifdef SQMOD_PLUGIN_API
-    #include <SqAPI.h>
-#else
-    #include <squirrelex.h>
-#endif // SQMOD_PLUGIN_API
+#include <squirrelex.h>
 
 #include "sqratTypes.h"
 
