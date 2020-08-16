@@ -29,6 +29,7 @@
 #define _SCRAT_SCRIPT_H_
 
 #include <squirrelex.h>
+#include <sqstdio.h>
 
 #include <string.h>
 
