@@ -33,7 +33,7 @@
 
 #include <cassert>
 #include <map>
-#include <string.h>
+#include <string>
 
 #if defined(SCRAT_USE_CXX11_OPTIMIZATIONS)
 #include <unordered_map>
