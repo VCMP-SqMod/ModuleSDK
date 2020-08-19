@@ -40,6 +40,10 @@ add_library(Squirrel STATIC
 	stdlib/sqstdstring.cpp
 	stdlib/sqstdsystem.cpp
 )
+# Enable LTO
+if (LTO_ENABLED)
+	target_link_libraries(Squirrel PRIVATE -flto)
+endif()
 # Create the Squirrel interface library used only to get access to includes and definitions
 add_library(SquirrelInterface INTERFACE)
 # Determine if build mode

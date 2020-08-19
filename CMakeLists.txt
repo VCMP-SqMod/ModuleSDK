@@ -24,6 +24,10 @@ add_library(SqModSDK STATIC
 	include/vcmp20.h
 	include/vcmp21.h
 )
+# Enable LTO
+if (LTO_ENABLED)
+	target_link_libraries(SqModSDK PRIVATE -flto)
+endif()
 # Create the SqSDK library for addons
 add_library(SqAddSDK STATIC
 	include/sqlibapi.h sqlibapi.cpp
@@ -47,6 +51,10 @@ add_library(SqAddSDK STATIC
 	include/vcmp20.h
 	include/vcmp21.h
 )
+# Enable LTO
+if (LTO_ENABLED)
+	target_link_libraries(SqAddSDK PRIVATE -flto)
+endif()
 
 # Library includes
 target_include_directories(SqModSDK PRIVATE ${CMAKE_CURRENT_LIST_DIR})
