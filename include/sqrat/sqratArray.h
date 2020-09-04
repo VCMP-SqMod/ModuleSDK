@@ -30,7 +30,7 @@
 
 #include <squirrelex.h>
 
-#include <string.h>
+#include <cstring>
 
 #include "sqratObject.h"
 #include "sqratFunction.h"
@@ -50,7 +50,7 @@ public:
     /// \param v VM that the array will exist in
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ArrayBase(HSQUIRRELVM v = SqVM()) : Object(true) {
+    ArrayBase() : Object(true) {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ public:
     /// \param obj An Object that should already represent a Squirrel array
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ArrayBase(const Object& obj) : Object(obj) {
+    explicit ArrayBase(const Object& obj) : Object(obj) {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ public:
     /// \param obj An Object that should already represent a Squirrel array
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ArrayBase(Object&& obj) noexcept : Object(std::forward< Object >(obj)) {
+    explicit ArrayBase(Object&& obj) noexcept : Object(std::forward< Object >(obj)) {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,8 +77,7 @@ public:
     /// \param sa ArrayBase to copy
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ArrayBase(const ArrayBase& sa) : Object(sa) {
-    }
+    ArrayBase(const ArrayBase& sa) = default;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Move constructor
@@ -96,7 +95,7 @@ public:
     /// \param v Squirrel VM that contains the Squirrel object given
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ArrayBase(HSQOBJECT o, HSQUIRRELVM v = SqVM()) : Object(o, v) {
+    explicit ArrayBase(HSQOBJECT o, HSQUIRRELVM v = SqVM()) : Object(o, v) {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,10 +106,7 @@ public:
     /// \return The ArrayBase itself
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ArrayBase& operator=(const ArrayBase& sa) {
-        Object::operator = (sa);
-        return *this;
-    }
+    ArrayBase& operator=(const ArrayBase& sa) = default;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Assignment operator
@@ -270,7 +266,8 @@ public:
         if (SQ_FAILED(sq_get(vm, -2))) {
             sq_pop(vm, 1);
             SQTHROW(vm, _SC("illegal index"));
-            return SharedPtr<T>();
+            SQ_UNREACHABLE
+            return SharedPtr<T>(); // avoid "not all control paths return a value" warning
         }
 #else
         sq_get(vm, -2);
@@ -278,6 +275,7 @@ public:
         SQTRY()
         Var<SharedPtr<T> > element(vm, -1);
         SQCATCH_NOEXCEPT(vm) {
+            SQ_UNREACHABLE
             sq_pop(vm, 2);
             return SharedPtr<T>();
         }
@@ -290,6 +288,7 @@ public:
             sq_pop(vm, 2);
             SQRETHROW(vm);
         }
+        SQ_UNREACHABLE
         return SharedPtr<T>(); // avoid "not all control paths return a value" warning
     }
 
@@ -357,6 +356,7 @@ public:
             SQTRY()
             Var<const T&> element(vm, -1);
             SQCATCH_NOEXCEPT(vm) {
+                SQ_UNREACHABLE
                 sq_pop(vm, 4);
                 return;
             }
@@ -604,8 +604,7 @@ public:
     /// \param size An optional size hint
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Array(HSQUIRRELVM v, const SQInteger size = 0) : ArrayBase(v) {
-        HSQUIRRELVM vm = SqVM();
+    Array(HSQUIRRELVM vm, const SQInteger size = 0) : ArrayBase() {
         sq_newarray(vm, size);
         sq_getstackobj(vm,-1,&mObj);
         sq_addref(vm, &mObj);
