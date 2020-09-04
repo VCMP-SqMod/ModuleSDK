@@ -24,6 +24,8 @@ add_library(SqModSDK STATIC
 	include/vcmp20.h
 	include/vcmp21.h
 )
+# Enable exceptions
+target_compile_definitions(SqModSDK PUBLIC SCRAT_USE_EXCEPTIONS=1)
 # Enable LTO
 if (LTO_ENABLED)
 	target_link_libraries(SqModSDK PRIVATE -flto)
@@ -51,6 +53,8 @@ add_library(SqAddSDK STATIC
 	include/vcmp20.h
 	include/vcmp21.h
 )
+# Enable exceptions
+target_compile_definitions(SqAddSDK PUBLIC SCRAT_USE_EXCEPTIONS=1)
 # Enable LTO
 if (LTO_ENABLED)
 	target_link_libraries(SqAddSDK PRIVATE -flto)
