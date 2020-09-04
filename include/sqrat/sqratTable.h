@@ -355,7 +355,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     bool HasKey(const SQChar* name)
     {
-        sq_pushobject(vm, obj);
+        sq_pushobject(vm, mObj);
         sq_pushstring(vm, name, -1);
         if (SQ_FAILED(sq_get(vm, -2))) {
             sq_pop(vm, 1);
@@ -381,7 +381,7 @@ public:
     template <typename T>
     SharedPtr<T> GetValue(const SQChar* name)
     {
-        sq_pushobject(vm, obj);
+        sq_pushobject(vm, mObj);
         sq_pushstring(vm, name, -1);
 #if !defined (SCRAT_NO_ERROR_CHECKING)
         if (SQ_FAILED(sq_get(vm, -2))) {
@@ -426,7 +426,7 @@ public:
     template <typename T>
     SharedPtr<T> GetValue(int index)
     {
-        sq_pushobject(vm, obj);
+        sq_pushobject(vm, mObj);
         sq_pushinteger(vm, index);
 #if !defined (SCRAT_NO_ERROR_CHECKING)
         if (SQ_FAILED(sq_get(vm, -2))) {
@@ -542,8 +542,8 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Table(HSQUIRRELVM v) : TableBase(v) {
         sq_newtable(vm);
-        sq_getstackobj(vm,-1,&obj);
-        sq_addref(vm, &obj);
+        sq_getstackobj(vm,-1,&mObj);
+        sq_addref(vm, &mObj);
         sq_pop(vm,1);
     }
 
@@ -584,8 +584,8 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Table(HSQUIRRELVM v, SQInteger c) : TableBase(v) {
         sq_newtableex(vm, c);
-        sq_getstackobj(vm,-1,&obj);
-        sq_addref(vm, &obj);
+        sq_getstackobj(vm,-1,&mObj);
+        sq_addref(vm, &mObj);
         sq_pop(vm,1);
     }
 
@@ -650,8 +650,8 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     RootTable(HSQUIRRELVM v = SqVM()) : TableBase(v) {
         sq_pushroottable(vm);
-        sq_getstackobj(vm,-1,&obj);
-        sq_addref(vm, &obj);
+        sq_getstackobj(vm,-1,&mObj);
+        sq_addref(vm, &mObj);
         sq_pop(v,1); // pop root table
     }
 };
@@ -671,8 +671,8 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     RegistryTable(HSQUIRRELVM v = SqVM()) : TableBase(v) {
         sq_pushregistrytable(v);
-        sq_getstackobj(vm,-1,&obj);
-        sq_addref(vm, &obj);
+        sq_getstackobj(vm,-1,&mObj);
+        sq_addref(vm, &mObj);
         sq_pop(v,1); // pop the registry table
     }
 };

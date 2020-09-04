@@ -56,11 +56,11 @@ protected:
 
 /// @cond DEV
     HSQUIRRELVM vm;
-    HSQOBJECT obj;
-    bool release;
+    HSQOBJECT mObj;
+    bool mRelease;
 
-    Object(HSQUIRRELVM v, bool releaseOnDestroy = true) : vm(v), release(releaseOnDestroy) {
-        sq_resetobject(&obj);
+    Object(HSQUIRRELVM v, bool releaseOnDestroy = true) : vm(v), mRelease(releaseOnDestroy) {
+        sq_resetobject(&mObj);
     }
 /// @endcond
 
@@ -70,8 +70,8 @@ public:
     /// Default constructor (null)
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Object() : vm(0), release(true) {
-        sq_resetobject(&obj);
+    Object() : vm(0), mRelease(true) {
+        sq_resetobject(&mObj);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,8 +80,8 @@ public:
     /// \param so Object to copy
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Object(const Object& so) : vm(so.vm), obj(so.obj), release(so.release) {
-        sq_addref(vm, &obj);
+    Object(const Object& so) : vm(so.vm), mObj(so.mObj), mRelease(so.mRelease) {
+        sq_addref(vm, &mObj);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,9 +90,9 @@ public:
     /// \param so Object to move
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Object(Object&& so) noexcept : vm(so.vm), obj(so.obj), release(so.release) {
+    Object(Object&& so) noexcept : vm(so.vm), mObj(so.mObj), mRelease(so.mRelease) {
         so.ResetObj();
-        so.release = false;
+        so.mRelease = false;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,8 +118,8 @@ public:
     /// \param v VM that the object will exist in
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Object(HSQOBJECT o, HSQUIRRELVM v = SqVM()) : vm(v), obj(o), release(!sq_isnull(o)) {
-        sq_addref(vm, &obj);
+    Object(HSQOBJECT o, HSQUIRRELVM v = SqVM()) : vm(v), mObj(o), mRelease(!sq_isnull(o)) {
+        sq_addref(vm, &mObj);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -129,12 +129,12 @@ public:
     /// \param v VM that the object will exist in
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Object(SQInteger i, HSQUIRRELVM v = SqVM()) : vm(v), release(true) {
-        if (SQ_FAILED(sq_getstackobj(vm, i, &obj))) {
-            sq_resetobject(&obj);
-            release = false;
+    Object(SQInteger i, HSQUIRRELVM v = SqVM()) : vm(v), mRelease(true) {
+        if (SQ_FAILED(sq_getstackobj(vm, i, &mObj))) {
+            sq_resetobject(&mObj);
+            mRelease = false;
         } else {
-            sq_addref(vm, &obj);
+            sq_addref(vm, &mObj);
         }
     }
 
@@ -148,18 +148,18 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class T>
-    Object(T* instance, HSQUIRRELVM v = SqVM()) : vm(v), release(true) {
+    Object(T* instance, HSQUIRRELVM v = SqVM()) : vm(v), mRelease(true) {
         // Preserve the stack state
         const StackGuard sg(vm);
         // Push the instance on the stack
         ClassType<T>::PushInstance(vm, instance);
         // Attempt to retrieve it
-        if (SQ_FAILED(sq_getstackobj(vm, -1, &obj))) {
-            sq_resetobject(&obj);
+        if (SQ_FAILED(sq_getstackobj(vm, -1, &mObj))) {
+            sq_resetobject(&mObj);
             // nothing to release anymore
-            release = false;
+            mRelease = false;
         } else {
-            sq_addref(vm, &obj);
+            sq_addref(vm, &mObj);
         }
     }
 
@@ -174,7 +174,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class T, class... A>
-    Object(SqTypeIdentity< T > SQ_UNUSED_ARG(t), HSQUIRRELVM v, A&&... a) : vm(v), release(true) {
+    Object(SqTypeIdentity< T > SQ_UNUSED_ARG(t), HSQUIRRELVM v, A&&... a) : vm(v), mRelease(true) {
         // Create the instance and guard it to make sure it gets deleted in case of exceptions
         DeleteGuard< T > instance(new T(std::forward< A >(a)...));
         // Preserve the stack state
@@ -182,12 +182,12 @@ public:
         // Push the instance on the stack
         ClassType<T>::PushInstance(vm, instance);
         // Attempt to retrieve it
-        if (SQ_FAILED(sq_getstackobj(vm, -1, &obj))) {
-            sq_resetobject(&obj);
+        if (SQ_FAILED(sq_getstackobj(vm, -1, &mObj))) {
+            sq_resetobject(&mObj);
             // nothing to release anymore
-            release = false;
+            mRelease = false;
         } else {
-            sq_addref(vm, &obj);
+            sq_addref(vm, &mObj);
         }
         // Stop guarding the instance
         instance.Release();
@@ -198,9 +198,9 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     virtual ~Object() {
-        if(release) {
+        if(mRelease) {
             Release();
-            release = false;
+            mRelease = false;
         }
     }
 
@@ -213,12 +213,12 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Object& operator=(const Object& so) {
-        if(release) {
+        if(mRelease) {
             Release();
         }
         vm = so.vm;
-        obj = so.obj;
-        release = so.release;
+        mObj = so.mObj;
+        mRelease = so.mRelease;
         sq_addref(vm, &GetObj());
         return *this;
     }
@@ -232,12 +232,12 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Object& operator=(Object&& so) noexcept {
-        if(release) {
+        if(mRelease) {
             Release();
         }
         vm = so.vm;
-        obj = so.obj;
-        release = so.release;
+        mObj = so.mObj;
+        mRelease = so.mRelease;
         so.Reset();
         return *this;
     }
@@ -277,7 +277,7 @@ public:
     void Reset() {
         vm = nullptr;
         sq_resetobject(&GetObj());
-        release = false;
+        mRelease = false;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -327,7 +327,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     virtual HSQOBJECT GetObj() const {
-        return obj;
+        return mObj;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -337,7 +337,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     virtual HSQOBJECT& GetObj() {
-        return obj;
+        return mObj;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -353,10 +353,10 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void Release() {
-        if (!sq_isnull(obj))
+        if (!sq_isnull(mObj))
         {
-            sq_release(vm, &obj);
-            sq_resetobject(&obj);
+            sq_release(vm, &mObj);
+            sq_resetobject(&mObj);
         }
     }
 
@@ -570,7 +570,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     bool Next(iterator& iter) const
     {
-        sq_pushobject(vm,obj);
+        sq_pushobject(vm, mObj);
         sq_pushinteger(vm,iter.Index);
         if(SQ_SUCCEEDED(sq_next(vm,-2)))
         {
@@ -601,7 +601,7 @@ public:
     SQRESULT Foreach(F&& func) const
     {
         const StackGuard sg(vm);
-        sq_pushobject(vm,obj);
+        sq_pushobject(vm, mObj);
         sq_pushnull(vm);
         SQRESULT res = SQ_OK;
         for(SQInteger i = 0; SQ_SUCCEEDED(sq_next(vm,-2)); ++i)
@@ -1156,35 +1156,35 @@ struct LightObj {
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline Object::Object(const LightObj& so) : vm(SqVM()), obj(so.mObj), release(!so.IsNull()) {
-    sq_addref(vm, &obj);
+inline Object::Object(const LightObj& so) : vm(SqVM()), mObj(so.mObj), mRelease(!so.IsNull()) {
+    sq_addref(vm, &mObj);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline Object::Object(LightObj&& so) noexcept : vm(SqVM()), obj(so.mObj), release(!so.IsNull()) {
+inline Object::Object(LightObj&& so) noexcept : vm(SqVM()), mObj(so.mObj), mRelease(!so.IsNull()) {
     so.Reset();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 inline Object& Object::operator=(const LightObj& so) {
-    if(release) {
+    if(mRelease) {
         Release();
     }
     vm = SqVM();
-    obj = so.mObj;
-    release = !so.IsNull();
+        mObj = so.mObj;
+        mRelease = !so.IsNull();
     sq_addref(vm, &GetObj());
     return *this;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 inline Object& Object::operator=(LightObj&& so) noexcept {
-    if(release) {
+    if(mRelease) {
         Release();
     }
     vm = SqVM();
-    obj = so.mObj;
-    release = !so.IsNull();
+        mObj = so.mObj;
+        mRelease = !so.IsNull();
     so.Reset();
     return *this;
 }

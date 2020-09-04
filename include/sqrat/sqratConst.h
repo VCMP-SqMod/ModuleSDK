@@ -203,8 +203,8 @@ public:
     Enumeration(HSQUIRRELVM v = SqVM(), bool createTable = true) : Object(v, false) {
         if(createTable) {
             sq_newtable(vm);
-            sq_getstackobj(vm,-1,&obj);
-            sq_addref(vm, &obj);
+            sq_getstackobj(vm,-1,&mObj);
+            sq_addref(vm, &mObj);
             sq_pop(vm,1);
         }
     }
@@ -299,7 +299,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ConstTable(HSQUIRRELVM v = SqVM()) : Enumeration(v, false) {
         sq_pushconsttable(vm);
-        sq_getstackobj(vm,-1, &obj);
+        sq_getstackobj(vm,-1, &mObj);
         sq_pop(v,1); // No addref needed, since the consttable is always around
     }
 

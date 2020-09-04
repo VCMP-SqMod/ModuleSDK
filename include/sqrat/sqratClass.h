@@ -60,7 +60,7 @@ private:
 
     static SQInteger cleanup_hook(SQUserPointer ptr, SQInteger size) {
         SQUNUSED(size);
-        ClassData<C>** ud = reinterpret_cast<ClassData<C>**>(ptr);
+        auto** ud = reinterpret_cast<ClassData<C>**>(ptr);
         delete *ud;
         return 0;
     }
@@ -92,7 +92,7 @@ public:
                 sq_rawset(v, -4);
             }
             sq_pushstring(v, className.c_str(), -1);
-            ClassData<C>** ud = reinterpret_cast<ClassData<C>**>(sq_newuserdata(v, sizeof(ClassData<C>*)));
+            auto** ud = reinterpret_cast<ClassData<C>**>(sq_newuserdata(v, sizeof(ClassData<C>*)));
             *ud = new ClassData<C>;
             sq_setreleasehook(v, -1, &cleanup_hook);
             sq_rawset(v, -3);
@@ -902,7 +902,7 @@ private:
 
     static SQInteger cleanup_hook(SQUserPointer ptr, SQInteger size) {
         SQUNUSED(size);
-        ClassData<C>** ud = reinterpret_cast<ClassData<C>**>(ptr);
+        auto** ud = reinterpret_cast<ClassData<C>**>(ptr);
         delete *ud;
         return 0;
     }
@@ -936,7 +936,7 @@ public:
                 sq_rawset(v, -4);
             }
             sq_pushstring(v, className.c_str(), -1);
-            ClassData<C>** ud = reinterpret_cast<ClassData<C>**>(sq_newuserdata(v, sizeof(ClassData<C>*)));
+            auto** ud = reinterpret_cast<ClassData<C>**>(sq_newuserdata(v, sizeof(ClassData<C>*)));
             *ud = new ClassData<C>;
             sq_setreleasehook(v, -1, &cleanup_hook);
             sq_rawset(v, -3);

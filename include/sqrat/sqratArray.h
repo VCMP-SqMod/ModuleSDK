@@ -260,7 +260,7 @@ public:
     template <typename T>
     SharedPtr<T> GetValue(int index)
     {
-        sq_pushobject(vm, obj);
+        sq_pushobject(vm, mObj);
         sq_pushinteger(vm, index);
 #if !defined (SCRAT_NO_ERROR_CHECKING)
         if (SQ_FAILED(sq_get(vm, -2))) {
@@ -517,7 +517,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     SQInteger Length() const
     {
-        sq_pushobject(vm, obj);
+        sq_pushobject(vm, mObj);
         SQInteger r = sq_getsize(vm, -1);
         sq_pop(vm, 1);
         return r;
@@ -591,8 +591,8 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Array(HSQUIRRELVM v, const SQInteger size = 0) : ArrayBase(v) {
         sq_newarray(vm, size);
-        sq_getstackobj(vm,-1,&obj);
-        sq_addref(vm, &obj);
+        sq_getstackobj(vm,-1,&mObj);
+        sq_addref(vm, &mObj);
         sq_pop(vm,1);
     }
 

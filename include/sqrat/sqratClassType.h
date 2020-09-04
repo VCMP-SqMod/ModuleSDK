@@ -44,12 +44,12 @@ typedef SQInteger (*COPYFUNC)(HSQUIRRELVM, SQInteger, const void*);
 
 // Every Squirrel class instance made by Sqrat has its type tag set to a AbstractStaticClassData object that is unique per C++ class
 struct AbstractStaticClassData {
-    AbstractStaticClassData() {}
-    virtual ~AbstractStaticClassData() {}
+    AbstractStaticClassData() = default;
+    virtual ~AbstractStaticClassData() = default;
     virtual SQUserPointer Cast(SQUserPointer ptr, SQUserPointer classType) = 0;
-    AbstractStaticClassData* baseClass;
-    string                   className;
-    COPYFUNC                 copyFunc;
+    AbstractStaticClassData* baseClass{nullptr};
+    string                   className{};
+    COPYFUNC                 copyFunc{};
 };
 
 // StaticClassData keeps track of the nearest base class B and the class associated with itself C in order to cast C++ pointers to the right base class
