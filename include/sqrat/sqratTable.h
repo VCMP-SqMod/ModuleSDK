@@ -50,7 +50,7 @@ public:
     /// \param v VM that the table will exist in
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    TableBase(HSQUIRRELVM v = SqVM()) : Object(true) {
+    TableBase() : Object(true) {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -546,8 +546,7 @@ public:
     /// \param v VM to create the Table in
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Table(HSQUIRRELVM v) : TableBase(v) {
-        HSQUIRRELVM vm = SqVM();
+    Table(HSQUIRRELVM vm) : TableBase() {
         sq_newtable(vm);
         sq_getstackobj(vm,-1,&mObj);
         sq_addref(vm, &mObj);
@@ -589,8 +588,7 @@ public:
     /// \param c The initial capacity of the created table
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Table(HSQUIRRELVM v, SQInteger c) : TableBase(v) {
-        HSQUIRRELVM vm = SqVM();
+    Table(HSQUIRRELVM vm, SQInteger c) : TableBase() {
         sq_newtableex(vm, c);
         sq_getstackobj(vm,-1,&mObj);
         sq_addref(vm, &mObj);
@@ -656,12 +654,11 @@ public:
     /// \param v VM to get the RootTable for
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    RootTable(HSQUIRRELVM v = SqVM()) : TableBase(v) {
-        HSQUIRRELVM vm = SqVM();
+    RootTable(HSQUIRRELVM vm = SqVM()) : TableBase() {
         sq_pushroottable(vm);
         sq_getstackobj(vm,-1,&mObj);
         sq_addref(vm, &mObj);
-        sq_pop(v,1); // pop root table
+        sq_pop(vm,1); // pop root table
     }
 };
 
@@ -678,12 +675,11 @@ public:
     /// \param v VM to get the RegistryTable for
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    RegistryTable(HSQUIRRELVM v = SqVM()) : TableBase(v) {
-        HSQUIRRELVM vm = SqVM();
-        sq_pushregistrytable(v);
+    RegistryTable(HSQUIRRELVM vm = SqVM()) : TableBase() {
+        sq_pushregistrytable(vm);
         sq_getstackobj(vm,-1,&mObj);
         sq_addref(vm, &mObj);
-        sq_pop(v,1); // pop the registry table
+        sq_pop(vm,1); // pop the registry table
     }
 };
 
