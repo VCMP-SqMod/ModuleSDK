@@ -50,7 +50,7 @@ public:
     /// \param v VM that the table will exist in
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    TableBase(HSQUIRRELVM v = SqVM()) : Object(v, true) {
+    TableBase(HSQUIRRELVM v = SqVM()) : Object(true) {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,6 +154,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void Bind(const SQChar* name, Object& obj) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_pushstring(vm, name, -1);
         sq_pushobject(vm, obj.GetObj());
@@ -172,6 +173,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void Bind(const SQChar* name, LightObj& obj) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_pushstring(vm, name, -1);
         sq_pushobject(vm, obj.GetObj());
@@ -189,6 +191,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     TableBase& SquirrelFunc(const SQChar* name, SQFUNCTION func) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_pushstring(vm, name, -1);
         sq_newclosure(vm, func, 0);
@@ -211,6 +214,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     TableBase& SquirrelFunc(const SQChar* name, SQFUNCTION func, SQInteger pnum, const SQChar * mask) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_pushstring(vm, name, -1);
         sq_newclosure(vm, func, 0);
@@ -353,8 +357,8 @@ public:
     /// \return True on success, otherwise false
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    bool HasKey(const SQChar* name)
-    {
+    bool HasKey(const SQChar* name) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, mObj);
         sq_pushstring(vm, name, -1);
         if (SQ_FAILED(sq_get(vm, -2))) {
@@ -379,8 +383,8 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template <typename T>
-    SharedPtr<T> GetValue(const SQChar* name)
-    {
+    SharedPtr<T> GetValue(const SQChar* name) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, mObj);
         sq_pushstring(vm, name, -1);
 #if !defined (SCRAT_NO_ERROR_CHECKING)
@@ -424,8 +428,8 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template <typename T>
-    SharedPtr<T> GetValue(int index)
-    {
+    SharedPtr<T> GetValue(int index) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, mObj);
         sq_pushinteger(vm, index);
 #if !defined (SCRAT_NO_ERROR_CHECKING)
@@ -464,6 +468,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Function GetFunction(const SQChar* name) {
+        HSQUIRRELVM vm = SqVM();
         HSQOBJECT funcObj;
         sq_pushobject(vm, GetObj());
         sq_pushstring(vm, name, -1);
@@ -495,6 +500,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Function GetFunction(const SQInteger index) {
+        HSQUIRRELVM vm = SqVM();
         HSQOBJECT funcObj;
         sq_pushobject(vm, GetObj());
         sq_pushinteger(vm, index);
@@ -541,6 +547,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Table(HSQUIRRELVM v) : TableBase(v) {
+        HSQUIRRELVM vm = SqVM();
         sq_newtable(vm);
         sq_getstackobj(vm,-1,&mObj);
         sq_addref(vm, &mObj);
@@ -583,6 +590,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Table(HSQUIRRELVM v, SQInteger c) : TableBase(v) {
+        HSQUIRRELVM vm = SqVM();
         sq_newtableex(vm, c);
         sq_getstackobj(vm,-1,&mObj);
         sq_addref(vm, &mObj);
@@ -649,6 +657,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     RootTable(HSQUIRRELVM v = SqVM()) : TableBase(v) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushroottable(vm);
         sq_getstackobj(vm,-1,&mObj);
         sq_addref(vm, &mObj);
@@ -670,6 +679,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     RegistryTable(HSQUIRRELVM v = SqVM()) : TableBase(v) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushregistrytable(v);
         sq_getstackobj(vm,-1,&mObj);
         sq_addref(vm, &mObj);

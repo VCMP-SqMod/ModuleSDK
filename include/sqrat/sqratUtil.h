@@ -216,15 +216,15 @@ private:
     }
 public:
     // Gets the default VM (copy)
-    static HSQUIRRELVM Get() {
+    static inline HSQUIRRELVM Get() {
         return StaticVM();
     }
     // Gets the default VM (reference)
-    static HSQUIRRELVM & Get_() {
+    static inline HSQUIRRELVM & Get_() {
         return StaticVM();
     }
     // Sets the default VM to a given VM
-    static void Set(HSQUIRRELVM vm) {
+    static inline void Set(HSQUIRRELVM vm) {
         StaticVM() = vm;
     }
 };

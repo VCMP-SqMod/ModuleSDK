@@ -50,7 +50,7 @@ public:
     /// \param v VM that the array will exist in
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ArrayBase(HSQUIRRELVM v = SqVM()) : Object(v, true) {
+    ArrayBase(HSQUIRRELVM v = SqVM()) : Object(true) {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -136,6 +136,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void Bind(const SQInteger index, Object& obj) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_pushinteger(vm, index);
         sq_pushobject(vm, obj.GetObj());
@@ -154,6 +155,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ArrayBase& SquirrelFunc(const SQInteger index, SQFUNCTION func, const SQChar* name = nullptr) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_pushinteger(vm, index);
         sq_newclosure(vm, func, 0);
@@ -177,6 +179,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ArrayBase& SquirrelFunc(const SQInteger index, SQFUNCTION func, SQInteger pnum, const SQChar * mask, const SQChar* name = nullptr) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_pushinteger(vm, index);
         sq_newclosure(vm, func, 0);
@@ -202,6 +205,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class V>
     ArrayBase& SetValue(const SQInteger index, const V& val) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_pushinteger(vm, index);
         PushVar(vm, val);
@@ -258,8 +262,8 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template <typename T>
-    SharedPtr<T> GetValue(int index)
-    {
+    SharedPtr<T> GetValue(int index) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, mObj);
         sq_pushinteger(vm, index);
 #if !defined (SCRAT_NO_ERROR_CHECKING)
@@ -298,6 +302,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Function GetFunction(const SQInteger index) {
+        HSQUIRRELVM vm = SqVM();
         HSQOBJECT funcObj;
         sq_pushobject(vm, GetObj());
         sq_pushinteger(vm, index);
@@ -333,8 +338,8 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template <typename T>
-    void GetArray(T* array, int size) const
-    {
+    void GetArray(T* array, int size) const {
+        HSQUIRRELVM vm = SqVM();
         HSQOBJECT value = GetObj();
         sq_pushobject(vm, value);
 #if !defined (SCRAT_NO_ERROR_CHECKING)
@@ -380,6 +385,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class V>
     ArrayBase& Append(const V& val) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         PushVar(vm, val);
         sq_arrayappend(vm, -2);
@@ -399,6 +405,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class V>
     ArrayBase& Append(V* val) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         PushVar(vm, val);
         sq_arrayappend(vm, -2);
@@ -419,6 +426,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class V>
     ArrayBase& Insert(const SQInteger destpos, const V& val) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         PushVar(vm, val);
         sq_arrayinsert(vm, -2, destpos);
@@ -439,6 +447,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class V>
     ArrayBase& Insert(const SQInteger destpos, V* val) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         PushVar(vm, val);
         sq_arrayinsert(vm, -2, destpos);
@@ -453,6 +462,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Object Pop() {
+        HSQUIRRELVM vm = SqVM();
         HSQOBJECT slotObj;
         sq_pushobject(vm, GetObj());
         if(SQ_FAILED(sq_arraypop(vm, -1, true))) {
@@ -475,6 +485,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ArrayBase& Remove(const SQInteger itemidx) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_arrayremove(vm, -1, itemidx);
         sq_pop(vm,1); // pop array
@@ -490,6 +501,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ArrayBase& Resize(const SQInteger newsize) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_arrayresize(vm, -1, newsize);
         sq_pop(vm,1); // pop array
@@ -503,6 +515,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ArrayBase& Reverse() {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_arrayreverse(vm, -1);
         sq_pop(vm,1); // pop array
@@ -515,8 +528,8 @@ public:
     /// \return Length in number of elements
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    SQInteger Length() const
-    {
+    SQInteger Length() const {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, mObj);
         SQInteger r = sq_getsize(vm, -1);
         sq_pop(vm, 1);
@@ -535,6 +548,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class F, class... A>
     ArrayBase& AppendFrom(F&& func, A &&... a) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         while (func(vm, std::forward< A >(a)...))
         {
@@ -556,6 +570,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class F, class... A>
     ArrayBase& AppendFromCounted(F&& func, A &&... a) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         for (SQInteger i = 0; func(vm, i, std::forward< A >(a)...); ++i)
         {
@@ -590,6 +605,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Array(HSQUIRRELVM v, const SQInteger size = 0) : ArrayBase(v) {
+        HSQUIRRELVM vm = SqVM();
         sq_newarray(vm, size);
         sq_getstackobj(vm,-1,&mObj);
         sq_addref(vm, &mObj);

@@ -81,7 +81,7 @@ public:
     /// \param createClass Should class type data be created? (almost always should be true - don't worry about it)
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Class(HSQUIRRELVM v, const string& className, bool createClass = true) : Object(v, false) {
+    Class(HSQUIRRELVM v, const string& className, bool createClass = true) : Object(false) {
         if (createClass && !ClassType<C>::hasClassData(v)) {
             sq_pushregistrytable(v);
             sq_pushstring(v, "__classes", -1);
@@ -129,7 +129,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     virtual HSQOBJECT GetObj() const {
-        return ClassType<C>::getClassData(vm)->classObj;
+        return ClassType<C>::getClassData(SqVM())->classObj;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,7 +139,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     virtual HSQOBJECT& GetObj() {
-        return ClassType<C>::getClassData(vm)->classObj;
+        return ClassType<C>::getClassData(SqVM())->classObj;
     }
 
 public:
@@ -198,7 +198,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class V>
     Class& Var(const SQChar* name, V C::* var) {
-        ClassData<C>* cd = ClassType<C>::getClassData(vm);
+        ClassData<C>* cd = ClassType<C>::getClassData(SqVM());
 
         // Add the getter
         BindAccessor(name, &var, sizeof(var), &sqDefaultGet<C, V>, cd->getTable);
@@ -226,7 +226,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class V>
     Class& ConstVar(const SQChar* name, V C::* var) {
-        ClassData<C>* cd = ClassType<C>::getClassData(vm);
+        ClassData<C>* cd = ClassType<C>::getClassData(SqVM());
 
         // Add the getter
         BindAccessor(name, &var, sizeof(var), &sqDefaultGet<C, V>, cd->getTable);
@@ -251,7 +251,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class V>
     Class& StaticVar(const SQChar* name, V* var) {
-        ClassData<C>* cd = ClassType<C>::getClassData(vm);
+        ClassData<C>* cd = ClassType<C>::getClassData(SqVM());
 
         // Add the getter
         BindAccessor(name, &var, sizeof(var), &sqStaticGet<C, V>, cd->getTable);
@@ -280,7 +280,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class F1, class F2>
     Class& Prop(const SQChar* name, F1 getMethod, F2 setMethod) {
-        ClassData<C>* cd = ClassType<C>::getClassData(vm);
+        ClassData<C>* cd = ClassType<C>::getClassData(SqVM());
 
         if(getMethod != NULL) {
             // Add the getter
@@ -313,7 +313,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class F1, class F2>
     Class& GlobalProp(const SQChar* name, F1 getMethod, F2 setMethod) {
-        ClassData<C>* cd = ClassType<C>::getClassData(vm);
+        ClassData<C>* cd = ClassType<C>::getClassData(SqVM());
 
         if(getMethod != NULL) {
             // Add the getter
@@ -345,7 +345,7 @@ public:
     template<class F>
     Class& Prop(const SQChar* name, F getMethod) {
         // Add the getter
-        BindAccessor(name, &getMethod, sizeof(getMethod), SqMemberOverloadedFunc(getMethod), ClassType<C>::getClassData(vm)->getTable);
+        BindAccessor(name, &getMethod, sizeof(getMethod), SqMemberOverloadedFunc(getMethod), ClassType<C>::getClassData(SqVM())->getTable);
 
         return *this;
     }
@@ -367,7 +367,7 @@ public:
     template<class F>
     Class& GlobalProp(const SQChar* name, F getMethod) {
         // Add the getter
-        BindAccessor(name, &getMethod, sizeof(getMethod), SqMemberGlobalOverloadedFunc(getMethod), ClassType<C>::getClassData(vm)->getTable);
+        BindAccessor(name, &getMethod, sizeof(getMethod), SqMemberGlobalOverloadedFunc(getMethod), ClassType<C>::getClassData(SqVM())->getTable);
 
         return *this;
     }
@@ -602,6 +602,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Class& SquirrelFunc(const SQChar* name, SQFUNCTION func) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, ClassType<C>::getClassData(vm)->classObj);
         sq_pushstring(vm, name, -1);
         sq_newclosure(vm, func, 0);
@@ -629,6 +630,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Class& SquirrelFunc(const SQChar* name, SQFUNCTION func, SQInteger pnum, const SQChar * mask) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, ClassType<C>::getClassData(vm)->classObj);
         sq_pushstring(vm, name, -1);
         sq_newclosure(vm, func, 0);
@@ -651,6 +653,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Function GetFunction(const SQChar* name) {
+        HSQUIRRELVM vm = SqVM();
         ClassData<C>* cd = ClassType<C>::getClassData(vm);
         HSQOBJECT funcObj;
         sq_pushobject(vm, cd->classObj);
@@ -711,6 +714,7 @@ protected:
 
     // Initialize the required data structure for the class
     void InitClass(ClassData<C>* cd) {
+        HSQUIRRELVM vm = SqVM();
         cd->instances.Init(new typename unordered_map<C*, HSQOBJECT>::type);
 
         // push the class
@@ -787,6 +791,7 @@ protected:
 
     // Helper function used to bind getters and setters
     inline void BindAccessor(const SQChar* name, void* var, size_t varSize, SQFUNCTION func, HSQOBJECT table) {
+        HSQUIRRELVM vm = SqVM();
         // Push the get or set table
         sq_pushobject(vm, table);
         sq_pushstring(vm, name, -1);
@@ -809,6 +814,7 @@ protected:
 
     // constructor binding
     Class& BindConstructor(SQFUNCTION constructor, SQInteger nParams, const SQChar *name = 0) {
+        HSQUIRRELVM vm = SqVM();
         // Decide whether to bind to a class or the root table
         bool alternative_global = false;
         if (name == 0)

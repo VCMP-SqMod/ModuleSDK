@@ -200,7 +200,8 @@ public:
     /// \param createTable Whether the underlying table that values are bound to is created by the constructor
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Enumeration(HSQUIRRELVM v = SqVM(), bool createTable = true) : Object(v, false) {
+    Enumeration(HSQUIRRELVM v = SqVM(), bool createTable = true) : Object(false) {
+        HSQUIRRELVM vm = SqVM();
         if(createTable) {
             sq_newtable(vm);
             sq_getstackobj(vm,-1,&mObj);
@@ -298,6 +299,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ConstTable(HSQUIRRELVM v = SqVM()) : Enumeration(v, false) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushconsttable(vm);
         sq_getstackobj(vm,-1, &mObj);
         sq_pop(v,1); // No addref needed, since the consttable is always around
@@ -355,6 +357,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ConstTable& Enum(const SQChar* name, Enumeration& en) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_pushstring(vm, name, -1);
         sq_pushobject(vm, en.GetObj());

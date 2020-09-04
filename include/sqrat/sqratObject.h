@@ -465,11 +465,10 @@ class Object {
 protected:
 
 /// @cond DEV
-    HSQUIRRELVM vm;
     HSQOBJECT mObj;
     bool mRelease;
 
-    Object(HSQUIRRELVM v, bool releaseOnDestroy = true) : vm(v), mRelease(releaseOnDestroy) {
+    explicit Object(bool releaseOnDestroy) : mRelease(releaseOnDestroy) {
         sq_resetobject(&mObj);
     }
 /// @endcond
@@ -480,9 +479,7 @@ public:
     /// Default constructor (null)
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Object() : vm(0), mRelease(true) {
-        sq_resetobject(&mObj);
-    }
+    Object() : Object(true) { }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Copy constructor
@@ -490,8 +487,8 @@ public:
     /// \param so Object to copy
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Object(const Object& so) : vm(so.vm), mObj(so.mObj), mRelease(so.mRelease) {
-        sq_addref(vm, &mObj);
+    Object(const Object& so) : mObj(so.mObj), mRelease(so.mRelease) {
+        sq_addref(SqVM(), &mObj);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -500,7 +497,7 @@ public:
     /// \param so Object to move
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Object(Object&& so) noexcept : vm(so.vm), mObj(so.mObj), mRelease(so.mRelease) {
+    Object(Object&& so) noexcept : mObj(so.mObj), mRelease(so.mRelease) {
         so.ResetObj();
         so.mRelease = false;
     }
@@ -511,8 +508,8 @@ public:
     /// \param so Object to copy
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Object(const LightObj& so) : vm(SqVM()), mObj(so.mObj), mRelease(!so.IsNull()) {
-        sq_addref(vm, &mObj);
+    Object(const LightObj& so) : mObj(so.mObj), mRelease(!so.IsNull()) {
+        sq_addref(SqVM(), &mObj);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -521,7 +518,7 @@ public:
     /// \param so Object to move
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Object(LightObj&& so) noexcept : vm(SqVM()), mObj(so.mObj), mRelease(!so.IsNull()) {
+    Object(LightObj&& so) noexcept : mObj(so.mObj), mRelease(!so.IsNull()) {
         so.Reset();
     }
 
@@ -532,7 +529,7 @@ public:
     /// \param v VM that the object will exist in
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Object(HSQOBJECT o, HSQUIRRELVM v = SqVM()) : vm(v), mObj(o), mRelease(!sq_isnull(o)) {
+    Object(HSQOBJECT o, HSQUIRRELVM vm = SqVM()) : mObj(o), mRelease(!sq_isnull(o)) {
         sq_addref(vm, &mObj);
     }
 
@@ -543,7 +540,7 @@ public:
     /// \param v VM that the object will exist in
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Object(SQInteger i, HSQUIRRELVM v = SqVM()) : vm(v), mRelease(true) {
+    Object(SQInteger i, HSQUIRRELVM vm = SqVM()) : mRelease(true) {
         if (SQ_FAILED(sq_getstackobj(vm, i, &mObj))) {
             sq_resetobject(&mObj);
             mRelease = false;
@@ -562,7 +559,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class T>
-    Object(T* instance, HSQUIRRELVM v = SqVM()) : vm(v), mRelease(true) {
+    Object(T* instance, HSQUIRRELVM vm = SqVM()) : mRelease(true) {
         // Preserve the stack state
         const StackGuard sg(vm);
         // Push the instance on the stack
@@ -588,7 +585,8 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class T, class... A>
-    Object(SqTypeIdentity< T > SQ_UNUSED_ARG(t), HSQUIRRELVM v, A&&... a) : vm(v), mRelease(true) {
+    Object(SqTypeIdentity< T > SQ_UNUSED_ARG(t), HSQUIRRELVM v, A&&... a) : mRelease(true) {
+        HSQUIRRELVM vm = SqVM();
         // Create the instance and guard it to make sure it gets deleted in case of exceptions
         DeleteGuard< T > instance(new T(std::forward< A >(a)...));
         // Preserve the stack state
@@ -630,10 +628,9 @@ public:
         if(mRelease) {
             Release();
         }
-        vm = so.vm;
         mObj = so.mObj;
         mRelease = so.mRelease;
-        sq_addref(vm, &GetObj());
+        sq_addref(SqVM(), &GetObj());
         return *this;
     }
 
@@ -649,7 +646,6 @@ public:
         if(mRelease) {
             Release();
         }
-        vm = so.vm;
         mObj = so.mObj;
         mRelease = so.mRelease;
         so.Reset();
@@ -668,10 +664,9 @@ public:
         if(mRelease) {
             Release();
         }
-        vm = SqVM();
         mObj = so.mObj;
         mRelease = !so.IsNull();
-        sq_addref(vm, &GetObj());
+        sq_addref(SqVM(), &GetObj());
         return *this;
     }
 
@@ -687,7 +682,6 @@ public:
         if(mRelease) {
             Release();
         }
-        vm = SqVM();
         mObj = so.mObj;
         mRelease = !so.IsNull();
         so.Reset();
@@ -707,19 +701,8 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void Reset() {
-        vm = nullptr;
         sq_resetobject(&GetObj());
         mRelease = false;
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Gets the Squirrel VM for this Object (reference)
-    ///
-    /// \return Squirrel VM associated with the Object
-    ///
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    HSQUIRRELVM& GetVM() {
-        return vm;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -729,7 +712,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     HSQUIRRELVM GetVM() const {
-        return vm;
+        return SqVM();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -787,7 +770,7 @@ public:
     void Release() {
         if (!sq_isnull(mObj))
         {
-            sq_release(vm, &mObj);
+            sq_release(SqVM(), &mObj);
             sq_resetobject(&mObj);
         }
     }
@@ -801,6 +784,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Object GetSlot(const SQChar* slot) const {
+        HSQUIRRELVM vm = SqVM();
         HSQOBJECT slotObj;
         sq_pushobject(vm, GetObj());
         sq_pushstring(vm, slot, -1);
@@ -808,7 +792,7 @@ public:
 #if !defined (SCRAT_NO_ERROR_CHECKING)
         if(SQ_FAILED(sq_get(vm, -2))) {
             sq_pop(vm, 1);
-            return Object(vm); // Return a NULL object
+            return Object{}; // Return a NULL object
         } else {
             sq_getstackobj(vm, -1, &slotObj);
             Object ret(slotObj, vm); // must addref before the pop!
@@ -833,6 +817,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Object GetSlot(SQInteger index) const {
+        HSQUIRRELVM vm = SqVM();
         HSQOBJECT slotObj;
         sq_pushobject(vm, GetObj());
         sq_pushinteger(vm, index);
@@ -840,7 +825,7 @@ public:
 #if !defined (SCRAT_NO_ERROR_CHECKING)
         if(SQ_FAILED(sq_get(vm, -2))) {
             sq_pop(vm, 1);
-            return Object(vm); // Return a NULL object
+            return Object{}; // Return a NULL object
         } else {
             sq_getstackobj(vm, -1, &slotObj);
             Object ret(slotObj, vm); // must addref before the pop!
@@ -865,6 +850,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     bool HasKey(const SQChar* key) const {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_pushstring(vm, key, -1);
         if (SQ_FAILED(sq_get(vm, -2))) {
@@ -884,6 +870,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     bool HasKey(SQInteger index) const {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_pushinteger(vm, index);
         if (SQ_FAILED(sq_get(vm, -2))) {
@@ -907,6 +894,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template <class T>
     T Cast() const {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         T ret = Var<T>(vm, -1).value;
         sq_pop(vm, 1);
@@ -936,6 +924,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     SQInteger GetSize() const {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         SQInteger ret = sq_getsize(vm, -1);
         sq_pop(vm, 1);
@@ -1002,6 +991,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     bool Next(iterator& iter) const
     {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, mObj);
         sq_pushinteger(vm,iter.Index);
         if(SQ_SUCCEEDED(sq_next(vm,-2)))
@@ -1032,6 +1022,7 @@ public:
     template<class F>
     SQRESULT Foreach(F&& func) const
     {
+        HSQUIRRELVM vm = SqVM();
         const StackGuard sg(vm);
         sq_pushobject(vm, mObj);
         sq_pushnull(vm);
@@ -1053,6 +1044,7 @@ protected:
 
     // Bind a function and it's associated Squirrel closure to the object
     inline void BindFunc(const SQChar* name, void* method, size_t methodSize, SQFUNCTION func, bool staticVar = false) {
+        HSQUIRRELVM vm = SqVM();
         // Push object/environment
         sq_pushobject(vm, GetObj());
         // Push name where the closure will be stored
@@ -1071,6 +1063,7 @@ protected:
     }
 
     inline void BindFunc(const SQInteger index, void* method, size_t methodSize, SQFUNCTION func, bool staticVar = false, const SQChar* name = nullptr) {
+        HSQUIRRELVM vm = SqVM();
         // Push object/environment
         sq_pushobject(vm, GetObj());
         // Push index where the closure will be stored
@@ -1091,6 +1084,7 @@ protected:
 
     // Bind a function and it's associated Squirrel closure to the object
     inline void BindOverload(const SQChar* name, void* method, size_t methodSize, SQFUNCTION func, SQFUNCTION overload, int argCount, bool staticVar = false) {
+        HSQUIRRELVM vm = SqVM();
         string overloadName;
         overloadName.reserve(15);
         SqOverloadName::Get(name, argCount, overloadName);
@@ -1125,6 +1119,7 @@ protected:
     // Set the value of a variable on the object. Changes to values set this way are not reciprocated
     template<class V>
     inline void BindValue(const SQChar* name, const V& val, bool staticVar = false) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_pushstring(vm, name, -1);
         PushVar(vm, val);
@@ -1133,6 +1128,7 @@ protected:
     }
     template<class V>
     inline void BindValue(const SQInteger index, const V& val, bool staticVar = false) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_pushinteger(vm, index);
         PushVar(vm, val);
@@ -1143,6 +1139,7 @@ protected:
     // Set the value of an instance on the object. Changes to values set this way are reciprocated back to the source instance
     template<class V>
     inline void BindInstance(const SQChar* name, V* val, bool staticVar = false) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_pushstring(vm, name, -1);
         PushVar(vm, val);
@@ -1151,6 +1148,7 @@ protected:
     }
     template<class V>
     inline void BindInstance(const SQInteger index, V* val, bool staticVar = false) {
+        HSQUIRRELVM vm = SqVM();
         sq_pushobject(vm, GetObj());
         sq_pushinteger(vm, index);
         PushVar(vm, val);
@@ -1164,6 +1162,7 @@ protected:
 /// @cond DEV
 template<>
 inline void Object::BindValue<int>(const SQChar* name, const int & val, bool staticVar /* = false */) {
+        HSQUIRRELVM vm = SqVM();
     sq_pushobject(vm, GetObj());
     sq_pushstring(vm, name, -1);
     PushVar<int>(vm, val);

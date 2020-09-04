@@ -49,7 +49,7 @@ public:
     /// \param v VM that the Script will be associated with
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Script(HSQUIRRELVM v = SqVM()) : Object(v, true) {
+    Script(HSQUIRRELVM v = SqVM()) : Object(true) {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -63,6 +63,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void CompileString(const string& script, const string& name = _SC("")) {
+        HSQUIRRELVM vm = SqVM();
         if(!sq_isnull(mObj)) {
             sq_release(vm, &mObj);
             sq_resetobject(&mObj);
@@ -90,6 +91,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     bool CompileString(const string& script, string& errMsg, const string& name = _SC("")) {
+        HSQUIRRELVM vm = SqVM();
         if(!sq_isnull(mObj)) {
             sq_release(vm, &mObj);
             sq_resetobject(&mObj);
@@ -119,6 +121,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void CompileFile(const string& path) {
+        HSQUIRRELVM vm = SqVM();
         if(!sq_isnull(mObj)) {
             sq_release(vm, &mObj);
             sq_resetobject(&mObj);
@@ -145,6 +148,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     bool CompileFile(const string& path, string& errMsg) {
+        HSQUIRRELVM vm = SqVM();
         if(!sq_isnull(mObj)) {
             sq_release(vm, &mObj);
             sq_resetobject(&mObj);
@@ -172,6 +176,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void Run() {
+        HSQUIRRELVM vm = SqVM();
 #if !defined (SCRAT_NO_ERROR_CHECKING)
         if(!sq_isnull(mObj)) {
             SQRESULT result;
@@ -202,6 +207,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     bool Run(string& errMsg) {
+        HSQUIRRELVM vm = SqVM();
         if(!sq_isnull(mObj)) {
             SQRESULT result;
             SQInteger top = sq_gettop(vm);
@@ -226,6 +232,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void WriteCompiledFile(const string& path) {
+        HSQUIRRELVM vm = SqVM();
 #if !defined (SCRAT_NO_ERROR_CHECKING)
         if(!sq_isnull(mObj)) {
             sq_pushobject(vm, mObj);
