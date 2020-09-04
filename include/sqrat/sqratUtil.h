@@ -418,7 +418,7 @@ public:
     /// \param len Length of the message
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Exception(const SQChar * msg, SQInteger len) : message(msg, len > 0 ? len : 0) {}
+    Exception(const SQChar * msg, SQInteger len) : message(msg, static_cast< size_t >(len > 0 ? len : 0)) { }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Constructs an exception
@@ -516,7 +516,7 @@ inline string LastErrorString(HSQUIRRELVM vm) {
     sq_tostring(vm, -1);
     sq_getstringandsize(vm, -1, &sqErr, &size);
     sq_pop(vm, 2);
-    return string(sqErr, size);
+    return string(sqErr, static_cast< size_t >(size));
 }
         
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1040,7 +1040,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     operator bool () const // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
     {
-        return m_Ptr;
+        return static_cast< bool >(m_Ptr);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2398,11 +2398,11 @@ inline unsigned U64ToA(uint64_t n, char * b) noexcept
     {
         u = static_cast< uint32_t >(a / 100000000LLU);
         LG(LN);
-        u = a % 100000000LLU;
+        u = static_cast< uint32_t >(a % 100000000LLU);
         LN(7);
     }
 
-    u = n % 100000000LLU;
+    u = static_cast< uint32_t >(n % 100000000LLU);
     LZ(7);
 
     return l;
