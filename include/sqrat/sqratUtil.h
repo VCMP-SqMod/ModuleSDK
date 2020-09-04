@@ -287,7 +287,7 @@ public:
         sq_pushstring(vm, "__error", -1);
         if (SQ_SUCCEEDED(sq_rawget(vm, -2))) {
             string** ud;
-            sq_getuserdata(vm, -1, (SQUserPointer*)&ud, NULL);
+            sq_getuserdata(vm, -1, (SQUserPointer*)&ud, nullptr);
             sq_pop(vm, 1);
             string err = **ud;
             sq_pushstring(vm, "__error", -1);
@@ -718,7 +718,7 @@ private:
         : m_Ptr(ptr)
         , m_Ref(ref)
     {
-        if (m_Ptr != NULL)
+        if (m_Ptr != nullptr)
         {
             ++(m_Ref->mHard);
             ++(m_Ref->mSoft);
@@ -735,7 +735,7 @@ private:
         {
             Reset();
 
-            if (ptr != NULL)
+            if (ptr != nullptr)
             {
                 m_Ptr = ptr;
                 m_Ref = new Counter(1,1);
@@ -753,7 +753,7 @@ private:
         {
             Reset();
 
-            if (ptr != NULL)
+            if (ptr != nullptr)
             {
                 m_Ptr = ptr;
                 m_Ref = ref;
@@ -771,8 +771,8 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     SharedPtr()
-        : m_Ptr(NULL)
-        , m_Ref(NULL)
+        : m_Ptr(nullptr)
+        , m_Ref(nullptr)
     {
 
     }
@@ -784,8 +784,8 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     explicit SharedPtr(T* ptr)
-        : m_Ptr(NULL)
-        , m_Ref(NULL)
+        : m_Ptr(nullptr)
+        , m_Ref(nullptr)
     {
         Assign(ptr);
     }
@@ -800,8 +800,8 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template <class U>
     explicit SharedPtr(U* ptr)
-        : m_Ptr(NULL)
-        , m_Ref(NULL)
+        : m_Ptr(nullptr)
+        , m_Ref(nullptr)
     {
         Assign(static_cast<T*>(ptr));
     }
@@ -841,8 +841,8 @@ public:
         : m_Ptr(other.m_Ptr)
         , m_Ref(other.m_Ref)
     {
-        other.m_Ptr = NULL;
-        other.m_Ref = NULL;
+        other.m_Ptr = nullptr;
+        other.m_Ref = nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -858,8 +858,8 @@ public:
         : m_Ptr(static_cast<T*>(other.m_Ptr))
         , m_Ref(other.m_Ref)
     {
-        other.m_Ptr = NULL;
-        other.m_Ref = NULL;
+        other.m_Ptr = nullptr;
+        other.m_Ref = nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -948,8 +948,8 @@ public:
             m_Ptr = other.m_Ptr;
             m_Ref = other.m_Ref;
 
-            other.m_Ptr = NULL;
-            other.m_Ref = NULL;
+            other.m_Ptr = nullptr;
+            other.m_Ref = nullptr;
         }
 
         return *this;
@@ -975,8 +975,8 @@ public:
             m_Ptr = static_cast<T*>(other.m_Ptr);
             m_Ref = other.m_Ref;
 
-            other.m_Ptr = NULL;
-            other.m_Ref = NULL;
+            other.m_Ptr = nullptr;
+            other.m_Ref = nullptr;
         }
 
         return *this;
@@ -1013,7 +1013,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void Reset()
     {
-        if (m_Ptr != NULL)
+        if (m_Ptr != nullptr)
         {
             --(m_Ref->mHard);
 
@@ -1029,8 +1029,8 @@ public:
                 delete m_Ref;
             }
 
-            m_Ptr = NULL;
-            m_Ref = NULL;
+            m_Ptr = nullptr;
+            m_Ref = nullptr;
         }
     }
 
@@ -1172,7 +1172,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     T& operator*() const
     {
-        assert(m_Ptr != NULL); // fails when dereferencing a null SharedPtr
+        assert(m_Ptr != nullptr); // fails when dereferencing a null SharedPtr
         return *m_Ptr;
     }
 
@@ -1182,7 +1182,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     T* operator->() const
     {
-        assert(m_Ptr != NULL); // fails when dereferencing a null SharedPtr
+        assert(m_Ptr != nullptr); // fails when dereferencing a null SharedPtr
         return m_Ptr;
     }
 
@@ -1242,7 +1242,7 @@ private:
         : m_Ptr(ptr)
         , m_Ref(ref)
     {
-        if (m_Ptr != NULL)
+        if (m_Ptr != nullptr)
         {
             ++(m_Ref->mSoft);
         }
@@ -1254,7 +1254,7 @@ private:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void Initialize(T * ptr, Counter * ref)
     {
-        if (ptr != NULL)
+        if (ptr != nullptr)
         {
             m_Ptr = ptr;
             m_Ref = ref;
@@ -1263,8 +1263,8 @@ private:
         }
         else
         {
-            m_Ptr = NULL;
-            m_Ref = NULL;
+            m_Ptr = nullptr;
+            m_Ref = nullptr;
         }
     }
 
@@ -1278,7 +1278,7 @@ private:
         {
             Reset();
 
-            if (ptr != NULL)
+            if (ptr != nullptr)
             {
                 m_Ptr = ptr;
                 m_Ref = ref;
@@ -1295,8 +1295,8 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     WeakPtr()
-        : m_Ptr(NULL)
-        , m_Ref(NULL)
+        : m_Ptr(nullptr)
+        , m_Ref(nullptr)
     {
 
     }
@@ -1336,8 +1336,8 @@ public:
         : m_Ptr(other.m_Ptr)
         , m_Ref(other.m_Ref)
     {
-        other.m_Ptr = NULL;
-        other.m_Ref = NULL;
+        other.m_Ptr = nullptr;
+        other.m_Ref = nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1353,8 +1353,8 @@ public:
         : m_Ptr(static_cast<T*>(other.m_Ptr))
         , m_Ref(other.m_Ref)
     {
-        other.m_Ptr = NULL;
-        other.m_Ref = NULL;
+        other.m_Ptr = nullptr;
+        other.m_Ref = nullptr;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1441,8 +1441,8 @@ public:
             m_Ptr = other.m_Ptr;
             m_Ref = other.m_Ref;
 
-            other.m_Ptr = NULL;
-            other.m_Ref = NULL;
+            other.m_Ptr = nullptr;
+            other.m_Ref = nullptr;
         }
 
         return *this;
@@ -1468,8 +1468,8 @@ public:
             m_Ptr = static_cast<T*>(other.m_Ptr);
             m_Ref = other.m_Ref;
 
-            other.m_Ptr = NULL;
-            other.m_Ref = NULL;
+            other.m_Ptr = nullptr;
+            other.m_Ref = nullptr;
         }
 
         return *this;
@@ -1516,7 +1516,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     bool Expired() const
     {
-        return (m_Ptr == NULL || m_Ref->mHard == 0);
+        return (m_Ptr == nullptr || m_Ref->mHard == 0);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1536,7 +1536,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void Reset()
     {
-        if (m_Ptr != NULL)
+        if (m_Ptr != nullptr)
         {
             --(m_Ref->mSoft);
 
@@ -1545,8 +1545,8 @@ public:
                 delete m_Ref;
             }
 
-            m_Ptr = NULL;
-            m_Ref = NULL;
+            m_Ptr = nullptr;
+            m_Ref = nullptr;
         }
     }
 

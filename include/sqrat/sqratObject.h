@@ -792,7 +792,7 @@ public:
 #if !defined (SCRAT_NO_ERROR_CHECKING)
         if(SQ_FAILED(sq_get(vm, -2))) {
             sq_pop(vm, 1);
-            return Object{}; // Return a NULL object
+            return Object{}; // Return a nullptr object
         } else {
             sq_getstackobj(vm, -1, &slotObj);
             Object ret(slotObj, vm); // must addref before the pop!
@@ -825,7 +825,7 @@ public:
 #if !defined (SCRAT_NO_ERROR_CHECKING)
         if(SQ_FAILED(sq_get(vm, -2))) {
             sq_pop(vm, 1);
-            return Object{}; // Return a NULL object
+            return Object{}; // Return a nullptr object
         } else {
             sq_getstackobj(vm, -1, &slotObj);
             Object ret(slotObj, vm); // must addref before the pop!
@@ -954,7 +954,7 @@ public:
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// Returns the string value of the key the iterator is on if possible
         ///
-        /// \return String or NULL
+        /// \return String or nullptr
         ///
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         const SQChar* getName() { return sq_objtostring(&Key); }

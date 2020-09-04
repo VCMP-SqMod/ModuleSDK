@@ -104,7 +104,7 @@ public:
                 cd->staticData.Init(new StaticClassData<C, void>);
                 cd->staticData->copyFunc  = &A::Copy;
                 cd->staticData->className = string(className);
-                cd->staticData->baseClass = NULL;
+                cd->staticData->baseClass = nullptr;
 
                 ClassType<C>::getStaticClassData() = cd->staticData;
             } else {
@@ -282,12 +282,12 @@ public:
     Class& Prop(const SQChar* name, F1 getMethod, F2 setMethod) {
         ClassData<C>* cd = ClassType<C>::getClassData(SqVM());
 
-        if(getMethod != NULL) {
+        if(getMethod != nullptr) {
             // Add the getter
             BindAccessor(name, &getMethod, sizeof(getMethod), SqMemberOverloadedFunc(getMethod), cd->getTable);
         }
 
-        if(setMethod != NULL) {
+        if(setMethod != nullptr) {
             // Add the setter
             BindAccessor(name, &setMethod, sizeof(setMethod), SqMemberOverloadedFunc(setMethod), cd->setTable);
         }
@@ -315,12 +315,12 @@ public:
     Class& GlobalProp(const SQChar* name, F1 getMethod, F2 setMethod) {
         ClassData<C>* cd = ClassType<C>::getClassData(SqVM());
 
-        if(getMethod != NULL) {
+        if(getMethod != nullptr) {
             // Add the getter
             BindAccessor(name, &getMethod, sizeof(getMethod), SqMemberGlobalOverloadedFunc(getMethod), cd->getTable);
         }
 
-        if(setMethod != NULL) {
+        if(setMethod != nullptr) {
             // Add the setter
             BindAccessor(name, &setMethod, sizeof(setMethod), SqMemberGlobalOverloadedFunc(setMethod), cd->setTable);
         }

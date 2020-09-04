@@ -464,7 +464,7 @@ public:
         sq_pushobject(vm, GetObj());
         if(SQ_FAILED(sq_arraypop(vm, -1, true))) {
             sq_pop(vm, 1);
-            return Object(); // Return a NULL object
+            return Object(); // Return a nullptr object
         } else {
             sq_getstackobj(vm, -1, &slotObj);
             Object ret(slotObj, vm);

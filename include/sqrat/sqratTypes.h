@@ -141,7 +141,7 @@ struct Var {
     Var(HSQUIRRELVM vm, SQInteger idx) {
         SQTRY()
         T* ptr = ClassType<T>::GetInstance(vm, idx);
-        if (ptr != NULL) {
+        if (ptr != nullptr) {
             value = *ptr;
 #if !defined (SCRAT_NO_ERROR_CHECKING)
         } else if (std::is_convertible<T, SQInteger>::value) { /* value is likely of integral type like enums */

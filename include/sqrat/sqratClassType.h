@@ -113,7 +113,7 @@ public:
         sq_rawget(vm, -2);
 #endif
         ClassData<C>** ud;
-        sq_getuserdata(vm, -1, (SQUserPointer*)&ud, NULL);
+        sq_getuserdata(vm, -1, (SQUserPointer*)&ud, nullptr);
         sq_pop(vm, 3);
         return *ud;
     }
@@ -197,12 +197,12 @@ public:
     }
 
     static C* GetInstance(HSQUIRRELVM vm, SQInteger idx, bool nullAllowed = false) {
-        AbstractStaticClassData* classType = NULL;
-        std::pair<C*, SharedPtr<typename unordered_map<C*, HSQOBJECT>::type> >* instance = NULL;
+        AbstractStaticClassData* classType = nullptr;
+        std::pair<C*, SharedPtr<typename unordered_map<C*, HSQOBJECT>::type> >* instance = nullptr;
         if (hasClassData(vm)) /* type checking only done if the value has type data else it may be enum */
         {
             if (nullAllowed && sq_gettype(vm, idx) == OT_NULL) {
-                return NULL;
+                return nullptr;
             }
 
             classType = getStaticClassData().Lock().Get();
@@ -210,12 +210,12 @@ public:
 #if !defined (SCRAT_NO_ERROR_CHECKING)
             if (SQ_FAILED(sq_getinstanceup(vm, idx, (SQUserPointer*)&instance, classType))) {
                 SQTHROW(vm, FormatTypeError(vm, idx, ClassName()));
-                return NULL;
+                return nullptr;
             }
 
-            if (instance == NULL) {
+            if (instance == nullptr) {
                 SQTHROW(vm, _SC("got unconstructed native class (call base.constructor in the constructor of Squirrel classes that extend native classes)"));
-                return NULL;
+                return nullptr;
             }
 #else
             sq_getinstanceup(vm, idx, (SQUserPointer*)&instance, 0);
@@ -224,14 +224,14 @@ public:
         else /* value is likely of integral type like enums, cannot return a pointer */
         {
             SQTHROW(vm, FormatTypeError(vm, idx, _SC("unknown")));
-            return NULL;
+            return nullptr;
         }
         AbstractStaticClassData* actualType;
         sq_gettypetag(vm, idx, (SQUserPointer*)&actualType);
-        if (actualType == NULL) {
+        if (actualType == nullptr) {
             SQInteger top = sq_gettop(vm);
             sq_getclass(vm, idx);
-            while (actualType == NULL) {
+            while (actualType == nullptr) {
                 sq_getbase(vm, -1);
                 sq_gettypetag(vm, -1, (SQUserPointer*)&actualType);
             }
