@@ -823,7 +823,7 @@ protected:
         // Generate the overload mangled name
         string overloadName;
         overloadName.reserve(15);
-        SqOverloadName::Get(name, nParams, overloadName);
+        SqOverloadName::Get(name, static_cast< int >(nParams), overloadName);
         // Should we push a class object?
         if (!alternative_global )
             sq_pushobject(vm, ClassType<C>::getClassData(vm)->classObj);
