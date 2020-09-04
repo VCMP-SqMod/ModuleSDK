@@ -240,7 +240,7 @@ public:
         if (classType != actualType) {
             return static_cast<C*>(actualType->Cast(instance->first, classType));
         }
-        return static_cast<C*>(instance->first);
+        return instance->first;
     }
 };
 
