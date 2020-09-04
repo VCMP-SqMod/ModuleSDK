@@ -140,17 +140,17 @@ public:
     }
 
     static inline AbstractStaticClassData*& BaseClass() {
-        assert(getStaticClassData().Expired() == false); // fails because called before a Sqrat::Class for this type exists
+        assert(!getStaticClassData().Expired()); // fails because called before a Sqrat::Class for this type exists
         return getStaticClassData().Lock()->baseClass;
     }
 
     static inline string& ClassName() {
-        assert(getStaticClassData().Expired() == false); // fails because called before a Sqrat::Class for this type exists
+        assert(!getStaticClassData().Expired()); // fails because called before a Sqrat::Class for this type exists
         return getStaticClassData().Lock()->className;
     }
 
     static inline COPYFUNC& CopyFunc() {
-        assert(getStaticClassData().Expired() == false); // fails because called before a Sqrat::Class for this type exists
+        assert(!getStaticClassData().Expired()); // fails because called before a Sqrat::Class for this type exists
         return getStaticClassData().Lock()->copyFunc;
     }
 
