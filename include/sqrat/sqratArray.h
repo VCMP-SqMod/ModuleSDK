@@ -240,7 +240,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class F>
     ArrayBase& Func(const SQInteger index, F method, const SQChar* name = nullptr) {
-        BindFunc(index, &method, sizeof(method), SqGlobalFunc(method), name);
+        BindFunc(index, &method, sizeof(method), SqGlobalFunc(method), static_cast<bool>(name));
         return *this;
     }
 
