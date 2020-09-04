@@ -129,7 +129,7 @@ struct EnumElements
     /// Constructor that can identify the number of values at compile-time.
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template < size_t N > explicit EnumElements(const EnumElement(&values)[N]) noexcept
-        : EnumElements(nullptr, values, N)
+        : EnumElements(nullptr, values, static_cast< unsigned >(N))
     { /* ... */ }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ struct EnumElements
     /// Constructor that can identify the number of values at compile-time.
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template < size_t N > EnumElements(const SQChar * name, const EnumElement(&values)[N]) noexcept
-        : EnumElements(name, values, N)
+        : EnumElements(name, values, static_cast< unsigned >(N))
     { /* ... */ }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -403,7 +403,7 @@ inline void RegisterEnumerationsPtr(HSQUIRRELVM vm, const EnumElements * elist, 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template < size_t N > inline void RegisterEnumerations(HSQUIRRELVM vm, const EnumElements(&elist)[N])
 {
-    RegisterEnumerationsPtr(vm, elist, N); // Just forward the information
+    RegisterEnumerationsPtr(vm, elist, static_cast< unsigned >(N)); // Just forward the information
 }
 
 }
