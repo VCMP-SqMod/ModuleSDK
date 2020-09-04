@@ -266,7 +266,6 @@ public:
         if (SQ_FAILED(sq_get(vm, -2))) {
             sq_pop(vm, 1);
             SQTHROW(vm, _SC("illegal index"));
-            SQ_UNREACHABLE
             return SharedPtr<T>(); // avoid "not all control paths return a value" warning
         }
 #else
@@ -275,7 +274,6 @@ public:
         SQTRY()
         Var<SharedPtr<T> > element(vm, -1);
         SQCATCH_NOEXCEPT(vm) {
-            SQ_UNREACHABLE
             sq_pop(vm, 2);
             return SharedPtr<T>();
         }
@@ -356,7 +354,6 @@ public:
             SQTRY()
             Var<const T&> element(vm, -1);
             SQCATCH_NOEXCEPT(vm) {
-                SQ_UNREACHABLE
                 sq_pop(vm, 4);
                 return;
             }
