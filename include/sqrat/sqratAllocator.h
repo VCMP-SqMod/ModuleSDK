@@ -196,7 +196,7 @@ public:
     static void SetInstance(HSQUIRRELVM vm, SQInteger idx, C* ptr)
     {
         ClassData<C>* cd = ClassType<C>::getClassData(vm);
-        sq_setinstanceup(vm, idx, new std::pair<C*, SharedPtr<typename unordered_map<C*, HSQOBJECT>::type> >(ptr, cd->instance));
+        sq_setinstanceup(vm, idx, new std::pair<C*, SharedPtr<typename unordered_map<C*, HSQOBJECT>::type> >(ptr, cd->instances));
         sq_setreleasehook(vm, idx, &Delete);
         sq_getstackobj(vm, idx, &((*cd->instances)[ptr]));
     }
@@ -278,7 +278,7 @@ public:
     static void SetInstance(HSQUIRRELVM vm, SQInteger idx, C* ptr)
     {
         ClassData<C>* cd = ClassType<C>::getClassData(vm);
-        sq_setinstanceup(vm, idx, new std::pair<C*, SharedPtr<typename unordered_map<C*, HSQOBJECT>::type> >(ptr, cd->instance));
+        sq_setinstanceup(vm, idx, new std::pair<C*, SharedPtr<typename unordered_map<C*, HSQOBJECT>::type> >(ptr, cd->instances));
         sq_setreleasehook(vm, idx, &Delete);
         sq_getstackobj(vm, idx, &((*cd->instances)[ptr]));
     }
