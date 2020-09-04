@@ -200,8 +200,7 @@ public:
     /// \param createTable Whether the underlying table that values are bound to is created by the constructor
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Enumeration(HSQUIRRELVM v = SqVM(), bool createTable = true) : Object(false) {
-        HSQUIRRELVM vm = SqVM();
+    Enumeration(HSQUIRRELVM vm = SqVM(), bool createTable = true) : Object(false) {
         if(createTable) {
             sq_newtable(vm);
             sq_getstackobj(vm,-1,&mObj);
