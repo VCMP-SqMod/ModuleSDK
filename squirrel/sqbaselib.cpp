@@ -294,7 +294,7 @@ static const SQRegFunction base_funcs[]={
     {_SC("print"),base_print,2, NULL},
     {_SC("error"),base_error,2, NULL},
     {_SC("compilestring"),base_compilestring,-2, _SC(".ss")},
-    {_SC("newthread"),base_newthread,2, _SC(".c")},
+    //{_SC("newthread"),base_newthread,2, _SC(".c")},
     {_SC("suspend"),base_suspend,-1, NULL},
     {_SC("array"),base_array,-2, _SC(".n")},
     {_SC("type"),base_type,2, NULL},
