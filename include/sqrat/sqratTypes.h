@@ -741,7 +741,7 @@ struct Var<string> {
         SQInteger len;
         sq_tostring(vm, idx);
         sq_getstringandsize(vm, -1, &ret, &len);
-        value.assign(ret, len);
+        value.assign(ret, static_cast< size_t >(len));
         sq_pop(vm,1);
     }
 
@@ -777,7 +777,7 @@ struct Var<const string&> {
         SQInteger len;
         sq_tostring(vm, idx);
         sq_getstringandsize(vm, -1, &ret, &len);
-        value.assign(ret, len);
+        value.assign(ret, static_cast< size_t >(len));
         sq_pop(vm,1);
     }
 
