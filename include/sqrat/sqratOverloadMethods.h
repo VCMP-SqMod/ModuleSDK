@@ -78,7 +78,7 @@ inline SQInteger OverloadExecutionForwarder(HSQUIRRELVM vm) {
     sq_getstringandsize(vm, -1, &funcName, &funcNameSize);
     // Generate the overload mangled name
     string overloadName;
-    overloadName.reserve(funcNameSize+5);
+    overloadName.reserve(static_cast< size_t >(funcNameSize)+5);
     SqOverloadName::Get(funcName, argCount, overloadName);
     // Pop the un-mangled closure name from the stack so we can replace it later
     sq_poptop(vm); // `funcName` becomes invalid after this
@@ -127,7 +127,7 @@ inline SQInteger OverloadConstructionForwarder(HSQUIRRELVM vm) {
     sq_getstringandsize(vm, -1, &funcName, &funcNameSize);
     // Generate the overload mangled name
     string overloadName;
-    overloadName.reserve(funcNameSize+5);
+    overloadName.reserve(static_cast< size_t >(funcNameSize)+5);
     SqOverloadName::Get(funcName, argCount, overloadName);
     // Push the overload mangled name on the stack
     sq_pushstring(vm, overloadName.c_str(), static_cast<SQInteger>(overloadName.size()));
