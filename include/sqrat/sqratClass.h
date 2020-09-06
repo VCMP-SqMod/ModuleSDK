@@ -407,7 +407,7 @@ public:
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Binds a class function with formatting support
+    /// Binds a class function with callback support
     ///
     /// \param name   Name of the function as it will appear in Squirrel
     /// \param method Function to bind
