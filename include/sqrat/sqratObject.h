@@ -142,16 +142,16 @@ struct LightObj {
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<class T>
-    explicit LightObj(T* instance, HSQUIRRELVM v = SqVM()) {
+    explicit LightObj(T* instance, HSQUIRRELVM vm = SqVM()) {
         // Preserve the stack state
-        const StackGuard sg(v);
+        const StackGuard sg(vm);
         // Push the instance on the stack
-        ClassType<T>::PushInstance(v, instance);
+        ClassType<T>::PushInstance(vm, instance);
         // Attempt to retrieve it
-        if (SQ_FAILED(sq_getstackobj(v, -1, &mObj))) {
+        if (SQ_FAILED(sq_getstackobj(vm, -1, &mObj))) {
             sq_resetobject(&mObj);
         } else {
-            sq_addref(v, &mObj);
+            sq_addref(vm, &mObj);
         }
     }
 
