@@ -2,6 +2,7 @@
 #include "sqlibapi.h"
 
 // ------------------------------------------------------------------------------------------------
+#include <sqstdstring.h>
 #include <stdlib.h>
 #include <string.h>
 
