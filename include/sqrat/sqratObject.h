@@ -42,6 +42,9 @@
 
 namespace Sqrat {
 
+// Forward Object declaration
+class Object;
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// A lightweight wrapper arround the Squirrel objects that implements RAII and still remains a POD type.
 ///

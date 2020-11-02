@@ -221,6 +221,9 @@ typedef SQUnsignedInteger32         SQUint32;
 typedef SQUnsignedInteger           SQUint;
 typedef SQInteger                   SQInt;
 
+// Forward sqrat namespace declaration
+namespace Sqrat {}
+
 // ------------------------------------------------------------------------------------------------
 using namespace Sqrat;
 
