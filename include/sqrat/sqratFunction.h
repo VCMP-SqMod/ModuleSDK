@@ -215,6 +215,44 @@ struct Function  {
         // Return whether current environment was used
         return cenv;
     }
+    // Runs the Function and returns its value as a LightObj
+    template<class... Args> LightObj Eval(Args &&... args) {
+        static constexpr unsigned ARGC = sizeof...(Args) + 1; // + environment
+        HSQUIRRELVM vm = SqVM();
+        const SQInteger top = sq_gettop(vm);
+        // Push the environment followed by the function
+        sq_pushobject(vm, mObj);
+        sq_pushobject(vm, mEnv);
+        // Validate the funtion parameter count
+#if !defined (SCRAT_NO_ERROR_CHECKING)
+        SQInteger nparams;
+        SQInteger nfreevars;
+        if (SQ_SUCCEEDED(sq_getclosureinfo(vm, -2, &nparams, &nfreevars)) &&
+            SqGlobalParamInspect< ArgFwd<Args...>::HASOPT >::Invalid(nparams, ARGC)) {
+            sq_pop(vm, 2);
+            SQTHROW(vm, _SC("wrong number of parameters"));
+            return LightObj();
+        }
+#endif
+        // Push the arguments
+        PushVars(vm, std::forward<Args>(args)...);
+
+#if !defined (SCRAT_NO_ERROR_CHECKING)
+        SQRESULT result = sq_call(vm, ARGC, true, ErrorHandling::IsEnabled());
+
+        //handle an error: pop the stack and throw the exception
+        if (SQ_FAILED(result)) {
+            sq_settop(vm, top);
+            SQTHROW(vm, LastErrorString(vm));
+            return LightObj();
+        }
+#else
+        sq_call(vm, ARGC, true, ErrorHandling::IsEnabled());
+#endif
+        LightObj ret(-1, vm);
+        sq_settop(vm, top);
+        return ret;
+    }
     // Runs the Function and returns its value as a SharedPtr
     template<class R, class... Args> SharedPtr<R> Evaluate(Args &&... args) {
         static constexpr unsigned ARGC = sizeof...(Args) + 1; // + environment
